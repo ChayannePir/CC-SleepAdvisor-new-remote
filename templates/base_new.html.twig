@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}SleepAdvisor - Réservations en Ligne{% endblock %}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        {{ encore_entry_link_tags('app') }}
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body class="d-flex flex-column" style="min-height: 100vh; background-color: #ffffff;">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: #000000; border-bottom: 2px solid #d4af37;">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand" href="{{ path('app_home') }}" style="color: #d4af37; font-weight: 500; letter-spacing: 1px;">
+                    <i class="fas fa-key"></i> SleepAdvisor
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: #d4af37;">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('public_search') }}" style="color: #fff; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">
+                                <i class="fas fa-search"></i> Rechercher
+                            </a>
+                        </li>
+                        {% if app.user %}
+                            {% if 'ROLE_ADMIN' in app.user.roles %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ path('admin_dashboard') }}" style="color: #fff; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">
+                                        <i class="fas fa-tachometer-alt"></i> Admin
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 'ROLE_CLIENT' in app.user.roles %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ path('client_reservations') }}" style="color: #fff; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">
+                                        <i class="fas fa-bookmark"></i> Réservations
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" style="color: #d4af37; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">
+                                    <i class="fas fa-user"></i> {{ app.user.email }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu" style="background-color: #000; border: 1px solid #d4af37;">
+                                    <li><a class="dropdown-item" href="{{ path('app_logout') }}" style="color: #fff;">Déconnexion</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_login') }}" style="color: #fff; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">
+                                    <i class="fas fa-sign-in-alt"></i> Connexion
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_register') }}" style="color: #d4af37; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; font-weight: 500;">
+                                    <i class="fas fa-user-plus"></i> Inscription
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow-1 py-5">
+            <div class="container-fluid px-4">
+                <!-- Flash Messages -->
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="background-color: #f0fdf4; border-left: 4px solid #00a86b; color: #1a1a1a; margin-bottom: 2rem;">
+                        <i class="fas fa-check-circle"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+                
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="background-color: #fef2f2; border-left: 4px solid #cc0000; color: #1a1a1a; margin-bottom: 2rem;">
+                        <i class="fas fa-exclamation-circle"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+
+                {% for message in app.flashes('warning') %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a; margin-bottom: 2rem;">
+                        <i class="fas fa-info-circle"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+
+                <!-- Page Content -->
+                {% block body %}{% endblock %}
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer style="background-color: #000000; color: #fff; padding: 3rem 2rem; border-top: 2px solid #d4af37;">
+            <div class="container-fluid">
+                <div class="row mb-3">
+                    <div class="col-md-4 mb-3">
+                        <h5 style="color: #d4af37; text-transform: uppercase; font-weight: 500; letter-spacing: 1px; font-size: 0.9rem;">SleepAdvisor</h5>
+                        <p style="color: #999; font-size: 0.9rem;">Plateforme moderne de réservation hôtelière</p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <h5 style="color: #d4af37; text-transform: uppercase; font-weight: 500; letter-spacing: 1px; font-size: 0.9rem;">Navigation</h5>
+                        <ul class="list-unstyled" style="font-size: 0.9rem;">
+                            <li><a href="{{ path('app_home') }}" style="color: #999; text-decoration: none;">Accueil</a></li>
+                            <li><a href="{{ path('public_search') }}" style="color: #999; text-decoration: none;">Rechercher</a></li>
+                            {% if not app.user %}
+                                <li><a href="{{ path('app_login') }}" style="color: #999; text-decoration: none;">Connexion</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <h5 style="color: #d4af37; text-transform: uppercase; font-weight: 500; letter-spacing: 1px; font-size: 0.9rem;">Contact</h5>
+                        <p style="color: #999; font-size: 0.9rem;">
+                            <i class="fas fa-envelope"></i> info@SleepAdvisor.com<br>
+                            <i class="fas fa-phone"></i> +33 1 23 45 67 89
+                        </p>
+                    </div>
+                </div>
+                <hr style="border-color: #333;">
+                <div style="text-align: center; color: #666; font-size: 0.85rem;">
+                    <p style="margin: 0;">&copy; 2026 SleepAdvisor. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        {{ encore_entry_script_tags('app') }}
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

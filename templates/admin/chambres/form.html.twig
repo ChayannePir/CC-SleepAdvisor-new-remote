@@ -1,0 +1,68 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}{{ chambre ? 'Éditer' : 'Créer' }} une chambre - Admin{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+        <i class="fas fa-door-open"></i> {{ chambre ? 'Éditer la chambre' : 'Créer une chambre' }}
+    </h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div class="card-body" style="background-color: #fff;">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="hotel_id" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Hôtel *</label>
+                            <select class="form-control" id="hotel_id" name="hotel_id" required style="border: 1px solid #ddd; padding: 0.75rem;">
+                                <option value="">Sélectionner un hôtel</option>
+                                {% for hotel in hotels %}
+                                    <option value="{{ hotel.id }}" 
+                                            {% if chambre and chambre.hotel.id == hotel.id %}selected{% endif %}>
+                                        {{ hotel.nom }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="type" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Type de chambre*</label>
+                                <select class="form-control" id="type" name="type" required style="border: 1px solid #ddd; padding: 0.75rem;">
+                                    {% set types = ['Single', 'Double', 'Twin', 'Suite', 'Deluxe'] %}
+                                    <option value="">Sélectionner</option>
+                                    {% for type in types %}
+                                        <option value="{{ type }}" {% if chambre and chambre.type == type %}selected{% endif %}>
+                                            {{ type }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="etage" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Étage *</label>
+                                <input type="number" class="form-control" id="etage" name="etage" 
+                                       value="{{ chambre ? chambre.etage : '' }}" required style="border: 1px solid #ddd; padding: 0.75rem;">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nombre_lits" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Nombre de lits *</label>
+                            <input type="number" class="form-control" id="nombre_lits" name="nombre_lits" 
+                                   value="{{ chambre ? chambre.nombreLits : '' }}" required min="1" style="border: 1px solid #ddd; padding: 0.75rem;">
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ path('admin_chambres_list') }}" class="btn" style="background-color: transparent; color: #666; border: 1px solid #ddd;">Annuler</a>
+                            <button type="submit" class="btn" style="background-color: #d4af37; color: #000; border: none; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem 1.5rem;">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

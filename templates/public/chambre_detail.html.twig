@@ -1,0 +1,53 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}{{ chambre.type }} - Étage {{ chambre.etage }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <a href="{{ path('public_search') }}" class="btn" style="background-color: transparent; color: #666; border: 1px solid #ddd; margin-bottom: 1.5rem;">
+        <i class="fas fa-arrow-left"></i> Retour
+    </a>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div class="card-body" style="background-color: #fff;">
+                    <h2 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">{{ chambre.type }}</h2>
+                    <hr style="border-color: #ddd;">
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 style="color: #d4af37; text-transform: uppercase; font-weight: 500; font-size: 0.9rem; letter-spacing: 0.5px;">Hôtel</h6>
+                            <p style="color: #1a1a1a;">
+                                <strong>{{ chambre.hotel.nom }}</strong><br>
+                                <small style="color: #666;">{{ chambre.hotel.adresse }}</small><br>
+                                <span class="badge" style="background-color: #d4af37; color: #000; font-weight: 500; padding: 0.4rem 0.8rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">{{ chambre.hotel.categorie }}</span>
+                            </p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h6 style="color: #d4af37; text-transform: uppercase; font-weight: 500; font-size: 0.9rem; letter-spacing: 0.5px;">Détails de la chambre</h6>
+                            <p style="color: #1a1a1a;">
+                                <small><strong>Étage:</strong> {{ chambre.etage }}</small><br>
+                                <small><strong>Lits:</strong> {{ chambre.nombreLits }}</small><br>
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if app.user %}
+                        <a href="{{ path('public_reserver_chambre', {id: chambre.id}) }}" class="btn" style="background-color: #d4af37; color: #000; font-weight: 500; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 1rem 2rem; font-size: 1rem;">
+                            <i class="fas fa-check"></i> Réserver cette chambre
+                        </a>
+                    {% else %}
+                        <div class="alert" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a;">
+                            <i class="fas fa-info-circle"></i> 
+                            Veuillez <a href="{{ path('app_login') }}" style="color: #d4af37; font-weight: 500;">vous connecter</a> ou 
+                            <a href="{{ path('app_register') }}" style="color: #d4af37; font-weight: 500;">vous inscrire</a> pour réserver.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

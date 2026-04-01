@@ -1,0 +1,76 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}Inscription - SleepAdvisor{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div class="card-body p-5" style="background-color: #fff;">
+                    <h2 class="card-title text-center mb-4" style="color: #d4af37; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+                        <i class="fas fa-user-plus"></i> Créer un compte
+                    </h2>
+
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       required placeholder="vous@exemple.com" style="border: 1px solid #ddd; padding: 0.75rem;">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="telephone" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Téléphone *</label>
+                                <input type="tel" class="form-control" id="telephone" name="telephone" 
+                                       required placeholder="06 XX XX XX XX" style="border: 1px solid #ddd; padding: 0.75rem;">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nom" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Nom complet *</label>
+                            <input type="text" class="form-control" id="nom" name="nom" 
+                                   required placeholder="Jean Dupont" style="border: 1px solid #ddd; padding: 0.75rem;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="adresse" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Adresse *</label>
+                            <input type="text" class="form-control" id="adresse" name="adresse" 
+                                   required placeholder="123 Rue de la Paix, 75000 Paris" style="border: 1px solid #ddd; padding: 0.75rem;">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Mot de passe *</label>
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       required placeholder="Au moins 8 caractères" style="border: 1px solid #ddd; padding: 0.75rem;">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="password_confirm" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Confirmer le mot de passe *</label>
+                                <input type="password" class="form-control" id="password_confirm" name="password_confirm" 
+                                       required style="border: 1px solid #ddd; padding: 0.75rem;">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn w-100 mb-3" style="background-color: #d4af37; color: #000; font-weight: 500; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem;">
+                            <i class="fas fa-user-plus"></i> S'inscrire
+                        </button>
+                    </form>
+
+                    <hr style="border-color: #ddd;">
+
+                    <div class="text-center">
+                        <p style="color: #666;">
+                            Vous avez déjà un compte? 
+                            <a href="{{ path('app_login') }}" class="text-decoration-none" style="color: #d4af37; font-weight: 500;">
+                                Se connecter
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

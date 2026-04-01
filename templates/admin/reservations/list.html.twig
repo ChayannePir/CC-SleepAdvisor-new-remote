@@ -1,0 +1,67 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}Réservations - Admin - SleepAdvisor{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+        <i class="fas fa-calendar"></i> Gestion des réservations
+    </h2>
+
+    <div class="card mb-4" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <div class="card-body" style="background-color: #fff;">
+            <form method="get" class="row g-3">
+                <div class="col-md-8">
+                    <input type="text" name="numero" class="form-control" placeholder="Rechercher par numéro..." 
+                           value="{{ numero }}" style="border: 1px solid #ddd; padding: 0.75rem;">
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn w-100" style="background-color: #d4af37; color: #000; font-weight: 500; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem;">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover mb-0" style="background-color: #fff;">
+            <thead style="background-color: #f8f8f8; border-bottom: 2px solid #d4af37;">
+                <tr>
+                    <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Numéro</th>
+                    <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Client</th>
+                    <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Hôtel</th>
+                    <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Dates</th>
+                    <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Statut</th>
+                    <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                    <tr>
+                        <td style="padding: 1rem; color: #1a1a1a; font-weight: 500;">{{ reservation.numeroReservation }}</td>
+                        <td style="padding: 1rem; color: #1a1a1a;">{{ reservation.client.nom }}</td>
+                        <td style="padding: 1rem; color: #1a1a1a;">{{ reservation.hotel.nom }}</td>
+                        <td style="padding: 1rem; color: #1a1a1a;">{{ reservation.dateDebut|date('d/m/Y') }} - {{ reservation.dateFin|date('d/m/Y') }}</td>
+                        <td style="padding: 1rem;">
+                            <span style="background-color: #d4af37; color: #000; padding: 0.4rem 0.8rem; border-radius: 4px; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                {{ reservation.statut }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem;">
+                            <a href="{{ path('admin_reservation_detail', {id: reservation.id}) }}" 
+                               class="btn btn-sm" style="background-color: transparent; color: #d4af37; border: 1px solid #d4af37; font-weight: 500;">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #999; padding: 2rem;">Aucune réservation</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

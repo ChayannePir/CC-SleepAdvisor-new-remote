@@ -1,0 +1,55 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}Mes réservations - SleepAdvisor{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+        <i class="fas fa-list"></i> Mes réservations
+    </h2>
+
+    {% if reservations|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" style="background-color: #fff;">
+                <thead style="background-color: #f8f8f8; border-bottom: 2px solid #d4af37;">
+                    <tr>
+                        <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Numéro</th>
+                        <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Hôtel</th>
+                        <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Dates</th>
+                        <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Chambres</th>
+                        <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Statut</th>
+                        <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                        <tr>
+                            <td style="padding: 1rem; color: #1a1a1a; font-weight: 500;">{{ reservation.numeroReservation }}</td>
+                            <td style="padding: 1rem; color: #1a1a1a;">{{ reservation.hotel.nom }}</td>
+                            <td style="padding: 1rem; color: #1a1a1a;">
+                                {{ reservation.dateDebut|date('d/m/Y') }} - {{ reservation.dateFin|date('d/m/Y') }}
+                            </td>
+                            <td style="padding: 1rem; color: #1a1a1a;">{{ reservation.chambres|length }}</td>
+                            <td style="padding: 1rem;">
+                                <span style="background-color: #d4af37; color: #000; padding: 0.4rem 0.8rem; border-radius: 4px; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    {{ reservation.statut }}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <a href="{{ path('client_reservation_detail', {id: reservation.id}) }}" 
+                                   class="btn btn-sm" style="background-color: transparent; color: #d4af37; border: 1px solid #d4af37; font-weight: 500; font-size: 0.85rem;">
+                                    <i class="fas fa-eye"></i> Détails
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a;">
+            <i class="fas fa-info-circle"></i> Vous n'avez pas encore de réservation.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

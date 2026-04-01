@@ -1,0 +1,47 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}Accueil - SleepAdvisor{% endblock %}
+
+{% block body %}
+<div style="background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: white; padding: 6rem 2rem; margin-bottom: 3rem; text-align: center;">
+    <div class="container-fluid">
+        <h1 style="font-size: 3rem; font-weight: 300; margin-bottom: 1rem; letter-spacing: 2px; text-transform: uppercase;">Bienvenue sur<br><span style="color: #d4af37; font-weight: 500;">SleepAdvisor</span></h1>
+        <p style="font-size: 1.3rem; color: #ccc; margin-bottom: 2rem; font-weight: 300;">Réservez votre chambre d'hôtel rapidement et facilement</p>
+        <a href="{{ path('public_search') }}" class="btn" style="background-color: #d4af37; color: #000; font-weight: 500; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.9rem 2rem; font-size: 1rem;">
+            <i class="fas fa-search"></i> Rechercher une chambre
+        </a>
+    </div>
+</div>
+
+<div class="container-fluid py-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff;">
+                <div class="card-body text-center p-5">
+                    <i class="fas fa-search" style="font-size: 3rem; color: #d4af37; margin-bottom: 1.5rem;"></i>
+                    <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Recherchez</h5>
+                    <p class="card-text" style="color: #666;">Trouvez les meilleures chambres disponibles selon vos dates</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff;">
+                <div class="card-body text-center p-5">
+                    <i class="fas fa-book" style="font-size: 3rem; color: #d4af37; margin-bottom: 1.5rem;"></i>
+                    <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Réservez</h5>
+                    <p class="card-text" style="color: #666;">Réservez facilement et sans frais</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff;">
+                <div class="card-body text-center p-5">
+                    <i class="fas fa-smile" style="font-size: 3rem; color: #d4af37; margin-bottom: 1.5rem;"></i>
+                    <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Profitez</h5>
+                    <p class="card-text" style="color: #666;">Profitez de vos vacances dans les meilleurs hôtels</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

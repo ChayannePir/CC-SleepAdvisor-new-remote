@@ -1,0 +1,87 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}Dashboard Admin - SleepAdvisor{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4">
+        <i class="fas fa-tachometer-alt"></i> Tableau de bord administrateur
+    </h2>
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #d4af37;">
+                <div class="card-body">
+                    <h6 class="card-title" style="color: #000; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">Clients</h6>
+                    <h2 style="color: #000; font-weight: 300;">{{ stats.clients }}</h2>
+                    <small style="color: #1a1a1a;">Clients enregistrés</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #000000;">
+                <div class="card-body">
+                    <h6 class="card-title" style="color: #d4af37; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">Chambres</h6>
+                    <h2 style="color: #fff; font-weight: 300;">{{ stats.chambres }}</h2>
+                    <small style="color: #ccc;">Chambres disponibles</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #d4af37;">
+                <div class="card-body">
+                    <h6 class="card-title" style="color: #000; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">Réservations</h6>
+                    <h2 style="color: #000; font-weight: 300;">{{ stats.reservations }}</h2>
+                    <small style="color: #1a1a1a;">Réservations totales</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #000000;">
+                <div class="card-body">
+                    <h6 class="card-title" style="color: #d4af37; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">Accès rapide</h6>
+                    <small style="color: #ccc;">Gérer votre hôtel</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div class="card-body" style="background-color: #fff; text-align: center;">
+                    <i class="fas fa-door-open" style="font-size: 2rem; color: #d4af37; margin-bottom: 1rem;"></i>
+                    <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Chambres</h5>
+                    <p class="card-text" style="color: #666;">Gérer votre inventaire de chambres</p>
+                    <a href="{{ path('admin_chambres_list') }}" class="btn btn-sm" style="background-color: #d4af37; color: #000; border: none; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1rem;">Gérer</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div class="card-body" style="background-color: #fff; text-align: center;">
+                    <i class="fas fa-calendar" style="font-size: 2rem; color: #d4af37; margin-bottom: 1rem;"></i>
+                    <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Réservations</h5>
+                    <p class="card-text" style="color: #666;">Voir et gérer les réservations</p>
+                    <a href="{{ path('admin_reservations_list') }}" class="btn btn-sm" style="background-color: #d4af37; color: #000; border: none; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1rem;">Gérer</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div class="card-body" style="background-color: #fff; text-align: center;">
+                    <i class="fas fa-users" style="font-size: 2rem; color: #d4af37; margin-bottom: 1rem;"></i>
+                    <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Clients</h5>
+                    <p class="card-text" style="color: #666;">Gérer les clients enregistrés</p>
+                    <a href="{{ path('admin_clients_list') }}" class="btn btn-sm" style="background-color: #d4af37; color: #000; border: none; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1rem;">Gérer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

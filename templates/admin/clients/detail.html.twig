@@ -1,0 +1,61 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}Détail client - Admin{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <a href="{{ path('admin_clients_list') }}" class="btn" style="background-color: transparent; color: #666; border: 1px solid #ddd; margin-bottom: 1.5rem;">
+        <i class="fas fa-arrow-left"></i> Retour
+    </a>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div class="card-body" style="background-color: #fff;">
+                    <h3 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">{{ client.nom }}</h3>
+
+                    <hr style="border-color: #ddd;">
+
+                    <p style="color: #666;">
+                        <strong style="color: #1a1a1a;">Email:</strong> {{ client.email }}<br>
+                        <strong style="color: #1a1a1a;">Téléphone:</strong> {{ client.telephone }}<br>
+                        <strong style="color: #1a1a1a;">Adresse:</strong> {{ client.adresse }}<br>
+                    </p>
+
+                    <hr style="border-color: #ddd;">
+
+                    <p style="color: #999; font-size: 0.9rem;">
+                        <small>Inscrit le: {{ client.createdAt|date('d/m/Y H:i') }}</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div class="card-header" style="background-color: #f8f8f8; border-bottom: 2px solid #d4af37; padding: 1rem;">
+                    <h5 style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; margin: 0;">Réservations ({{ client.reservations|length }})</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for reservation in client.reservations %}
+                        <a href="{{ path('admin_reservation_detail', {id: reservation.id}) }}" 
+                           class="list-group-item list-group-item-action" style="background-color: #fff; border-bottom: 1px solid #ddd;">
+                            <div class="d-flex w-100 justify-content-between">
+                                <strong style="color: #1a1a1a;">{{ reservation.numeroReservation }}</strong>
+                                <span style="background-color: #d4af37; color: #000; padding: 0.3rem 0.6rem; border-radius: 3px; font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    {{ reservation.statut }}
+                                </span>
+                            </div>
+                            <small style="color: #999;">{{ reservation.dateDebut|date('d/m/Y') }} - {{ reservation.dateFin|date('d/m/Y') }}</small>
+                        </a>
+                    {% else %}
+                        <div class="list-group-item">
+                            <small class="text-muted">Aucune réservation</small>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

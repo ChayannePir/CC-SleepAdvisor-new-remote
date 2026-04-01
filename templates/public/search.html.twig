@@ -1,0 +1,86 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}Rechercher une chambre - SleepAdvisor{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+        <i class="fas fa-search"></i> Rechercher une chambre
+    </h2>
+
+    <div class="card mb-4" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <div class="card-body" style="background-color: #fff;">
+            <form method="post" class="row g-3">
+                <div class="col-md-4">
+                    <label for="date_debut" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Date d'arrivée</label>
+                    <input type="date" class="form-control" id="date_debut" name="date_debut" 
+                           value="{{ date_debut|date('Y-m-d') if date_debut }}" required style="border: 1px solid #ddd; padding: 0.75rem;">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="date_fin" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Date de départ</label>
+                    <input type="date" class="form-control" id="date_fin" name="date_fin" 
+                           value="{{ date_fin|date('Y-m-d') if date_fin }}" required style="border: 1px solid #ddd; padding: 0.75rem;">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="hotel_id" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Hôtel (optionnel)</label>
+                    <select class="form-select" id="hotel_id" name="hotel_id" style="border: 1px solid #ddd; padding: 0.75rem;">
+                        <option value="">Tous les hôtels</option>
+                        {% for hotel in hotels %}
+                            <option value="{{ hotel.id }}" {% if hotel.id == hotel_id %}selected{% endif %}>
+                                {{ hotel.nom }} ({{ hotel.categorie }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn" style="background-color: #d4af37; color: #000; font-weight: 500; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem 1.5rem;">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if chambres|length > 0 %}
+            {% for chambre in chambres %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
+                        <div class="card-body" style="background-color: #fff;">
+                            <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">{{ chambre.type }} - Étage {{ chambre.etage }}</h5>
+                            <p class="card-text" style="color: #666;">
+                                <small><strong>Hôtel:</strong> {{ chambre.hotel.nom }}</small><br>
+                                <small><strong>Lits:</strong> {{ chambre.nombreLits }}</small><br>
+                                <small><strong>Catégorie:</strong> {{ chambre.hotel.categorie }}</small>
+                            </p>
+                        </div>
+                        <div class="card-footer" style="background-color: #f8f8f8; border: none;">
+                            <a href="{{ path('public_chambre_detail', {id: chambre.id}) }}" class="btn btn-sm" style="background-color: #fff; color: #d4af37; border: 1px solid #d4af37; font-weight: 500;">
+                                <i class="fas fa-eye"></i> Détails
+                            </a>
+                            <a href="{{ path('public_reserver_chambre', {id: chambre.id}) }}" class="btn btn-sm" style="background-color: #d4af37; color: #000; border: none; font-weight: 500;">
+                                <i class="fas fa-check"></i> Réserver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% elseif date_debut and date_fin %}
+            <div class="col-12">
+                <div class="alert" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a;">
+                    <i class="fas fa-info-circle"></i> Aucune chambre disponible pour cette période.
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a;">
+                    <i class="fas fa-info-circle"></i> Sélectionnez des dates pour rechercher.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
