@@ -147,7 +147,7 @@ Accédez à `http://localhost:8000` dans votre navigateur.
 #### Client
 
 - Email: `client@example.com`
-- Mot de passe: `password123`
+- Mot de passe: `client123`
 
 #### Admin
 
