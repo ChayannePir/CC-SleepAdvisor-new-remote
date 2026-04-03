@@ -124,10 +124,10 @@ php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
 
-5. **Charger les données de test (optionnel)**
+5. **Charger les données de test**
 
 ```bash
-php bin/console doctrine:fixtures:load --no-interaction
+php bin/console doctrine:fixtures:load
 ```
 
 6. **Lancer le serveur de développement**
@@ -147,7 +147,7 @@ Accédez à `http://localhost:8000` dans votre navigateur.
 #### Client
 
 - Email: `client@example.com`
-- Mot de passe: `client123`
+- Mot de passe: `password123`
 
 #### Admin
 
