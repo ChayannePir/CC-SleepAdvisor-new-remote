@@ -1,0 +1,164 @@
+{% extends "base_new.html.twig" %}
+
+{% block title %}Vérification des informations - SleepAdvisor{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+        <i class="fas fa-clipboard-check"></i> Vérifier vos informations
+    </h2>
+
+    <div class="row">
+        <!-- Résumé de la réservation -->
+        <div class="col-lg-8">
+            <div class="card mb-4" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div class="card-header" style="background-color: #f8f8f8; border-bottom: 1px solid #ddd;">
+                    <h5 class="mb-0" style="color: #1a1a1a; font-weight: 500;">
+                        <i class="fas fa-bed"></i> Détails de votre réservation
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for chambreKey, chambre in basket %}
+                        <div class="row mb-3 pb-3" style="border-bottom: 1px solid #eee;">
+                            <div class="col-md-8">
+                                <h6 style="color: #1a1a1a; font-weight: 600; margin-bottom: 0.5rem;">
+                                    {{ chambre.chambre_type }} - Étage {{ chambre.chambre_etage }}
+                                </h6>
+                                <small style="color: #666;">
+                                    <strong>Hôtel:</strong> {{ chambre.hotel_nom }}<br>
+                                    <strong>Lits:</strong> {{ chambre.chambre_nombreLits }}<br>
+                                    <strong>À partir de:</strong> <span style="color: #d4af37; font-weight: 500;">{{ chambre.date_debut }}</span><br>
+                                    <strong>Jusqu'au:</strong> <span style="color: #d4af37; font-weight: 500;">{{ chambre.date_fin }}</span>
+                                </small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Formulaire de collecte données -->
+            <div class="card" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div class="card-header" style="background-color: #f8f8f8; border-bottom: 1px solid #ddd;">
+                    <h5 class="mb-0" style="color: #1a1a1a; font-weight: 500;">
+                        <i class="fas fa-user"></i> Vos informations de contact
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                Email *
+                            </label>
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                name="email"
+                                value="{{ user.email }}"
+                                required
+                                style="border: 1px solid #ddd; padding: 0.75rem; background-color: #f9f9f9;"
+                            >
+                            <small style="color: #666; display: block; margin-top: 0.5rem;">
+                                <i class="fas fa-info-circle"></i> Cette adresse sera utilisée pour les confirmations
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="telephone" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                Téléphone *
+                            </label>
+                            <input
+                                type="tel"
+                                class="form-control"
+                                id="telephone"
+                                name="telephone"
+                                value="{{ user.telephone }}"
+                                required
+                                placeholder="+33 X XX XX XX XX"
+                                style="border: 1px solid #ddd; padding: 0.75rem; background-color: #f9f9f9;"
+                            >
+                            <small style="color: #666; display: block; margin-top: 0.5rem;">
+                                <i class="fas fa-info-circle"></i> Le numéro sera utilisé pour contacter l'hôtel si nécessaire
+                            </small>
+                        </div>
+
+                        <div style="background-color: #fffbeb; border-left: 4px solid #fbbf24; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;">
+                            <small style="color: #1a1a1a;">
+                                <i class="fas fa-check-circle" style="color: #fbbf24;"></i>
+                                <strong>Vérifiez vos informations</strong> avant de confirmer votre réservation. Ces données ne peuvent pas être modifiées après la confirmation.
+                            </small>
+                        </div>
+
+                        <button type="submit" class="btn w-100" style="background-color: #d4af37; color: #000; font-weight: 600; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.9rem; font-size: 1.1rem;">
+                            <i class="fas fa-check"></i> Confirmer la réservation
+                        </button>
+
+                        <a href="{{ path('public_basket') }}" class="btn w-100 mt-2" style="background-color: #f0f0f0; color: #1a1a1a; font-weight: 500; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.9rem;">
+                            <i class="fas fa-arrow-left"></i> Retour au panier
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Résumé latéral -->
+        <div class="col-lg-4">
+            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: white; sticky; position: sticky; top: 2rem;">
+                <div class="card-body">
+                    <h5 style="font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px; color: #d4af37;">
+                        <i class="fas fa-clipboard-list"></i> Résumé
+                    </h5>
+
+                    <p style="margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                        <strong>Nombre de chambres:</strong>
+                        <span style="float: right; color: #d4af37; font-weight: 600;">{{ basket_info.count }}</span>
+                    </p>
+
+                    <p style="margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                        <strong>Période de séjour:</strong>
+                        <span style="display: block; color: #d4af37; font-weight: 600; margin-top: 0.3rem;">
+                            {{ basket_info.first_date_debut }}<br>
+                            au<br>
+                            {{ basket_info.last_date_fin }}
+                        </span>
+                    </p>
+
+                    {% if basket_info.hotels|length == 1 %}
+                        <p style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                            <strong>Hôtel:</strong>
+                            <span style="display: block; color: #d4af37; font-weight: 600; margin-top: 0.3rem;">
+                                {% for hotelName in basket_info.hotels %}
+                                    {{ hotelName }}
+                                {% endfor %}
+                            </span>
+                        </p>
+                    {% endif %}
+
+                    <div style="background-color: rgba(212, 175, 55, 0.2); border-left: 3px solid #d4af37; padding: 1rem; border-radius: 4px;">
+                        <h6 style="color: #d4af37; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9rem;">
+                            ✓ Statut: En attente de confirmation
+                        </h6>
+                        <small style="color: #ccc;">
+                            L'hôtel confirmera votre réservation dans les 24h
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Besoin d'aide -->
+            <div class="card mt-3" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div class="card-body">
+                    <h6 style="color: #1a1a1a; font-weight: 600; margin-bottom: 1rem;">
+                        <i class="fas fa-question-circle"></i> Besoin d'aide?
+                    </h6>
+                    <small style="color: #666; display: block; line-height: 1.6;">
+                        📞 support@sleepAdvisor.com<br>
+                        💬 Chat disponible 24h/24
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

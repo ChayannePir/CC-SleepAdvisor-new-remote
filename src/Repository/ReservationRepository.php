@@ -69,4 +69,25 @@ class ReservationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Vérifier les chevauchements de dates avec réservations CONFIRMÉES seulement
+     * Une chambre est indisponible que si elle a une réservation CONFIRMÉE qui chevauche
+     */
+    public function findConfirmedConflictingReservations(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, int $chambreId): array
+    {
+        return $this->createQueryBuilder('r')
+            ->innerJoin('r.chambres', 'c')
+            ->where('c.id = :chambreId')
+            ->andWhere(
+                'r.dateDebut < :dateFin AND r.dateFin > :dateDebut'
+            )
+            ->andWhere('r.statut = :confirmed')
+            ->setParameter('chambreId', $chambreId)
+            ->setParameter('dateDebut', $dateDebut)
+            ->setParameter('dateFin', $dateFin)
+            ->setParameter('confirmed', 'Confirmée')
+            ->getQuery()
+            ->getResult();
+    }
 }

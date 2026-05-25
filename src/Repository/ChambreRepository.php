@@ -38,6 +38,9 @@ class ChambreRepository extends ServiceEntityRepository
 
     /**
      * Chercher chambres disponibles pour une plage de dates
+     * Une chambre est disponible si elle n'a PAS de réservation CONFIRMÉE qui chevauche
+     *
+     * Les réservations "En attente" et "Annulée" ne bloquent pas une chambre
      */
     public function findAvailableChambres(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, ?Hotel $hotel = null): array
     {
@@ -48,18 +51,15 @@ class ChambreRepository extends ServiceEntityRepository
                 ->setParameter('hotel', $hotel);
         }
 
-        $qb->leftJoin('c.reservations', 'r')
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->isNull('r.id'),
-                    $qb->expr()->orX(
-                        $qb->expr()->lt('r.dateFin', ':dateDebut'),
-                        $qb->expr()->gt('r.dateDebut', ':dateFin')
-                    )
-                )
-            )
+        $qb->leftJoin('c.reservations', 'r',
+            \Doctrine\ORM\Query\Expr\Join::WITH,
+            'r.statut = :confirmed AND r.dateDebut < :dateFin AND r.dateFin > :dateDebut'
+        )
+            ->where('r.id IS NULL')
             ->setParameter('dateDebut', $dateDebut)
             ->setParameter('dateFin', $dateFin)
+            ->setParameter('confirmed', 'Confirmée')
+            ->orderBy('c.etage', 'ASC')
             ->groupBy('c.id');
 
         return $qb->getQuery()->getResult();

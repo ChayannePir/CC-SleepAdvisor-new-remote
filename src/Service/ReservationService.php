@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * Service pour gérer les réservations
  * Contient la logique métier pour les réservations
- * 
+ *
  * @package App\Service
  */
 class ReservationService
@@ -29,6 +29,14 @@ class ReservationService
 
     /**
      * Créer une nouvelle réservation
+     *
+     * @param Client $client
+     * @param Hotel $hotel
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
+     * @param array $chambres - Au moins une chambre obligatoire
+     * @return Reservation
+     * @throws \InvalidArgumentException
      */
     public function createReservation(
         Client $client,
@@ -41,22 +49,34 @@ class ReservationService
             throw new \InvalidArgumentException('Au moins une chambre doit être réservée');
         }
 
-        // Vérifier les chevauchements
+        // Valider que les dates sont cohérentes
+        if ($dateFin <= $dateDebut) {
+            throw new \InvalidArgumentException('La date de fin doit être après la date de début');
+        }
+
+        // Vérifier la disponibilité de CHAQUE chambre
         foreach ($chambres as $chambre) {
-            $conflicts = $this->reservationRepository->findConflictingReservations(
+            if (!$chambre instanceof Chambre) {
+                throw new \InvalidArgumentException('Objet chambre invalide');
+            }
+
+            // Chercher les réservations CONFIRMÉES qui chevauchent
+            $conflicts = $this->reservationRepository->findConfirmedConflictingReservations(
                 $dateDebut,
                 $dateFin,
                 $chambre->getId()
             );
-            
+
             if (!empty($conflicts)) {
                 throw new \InvalidArgumentException(sprintf(
-                    'La chambre %d n\'est pas disponible pour cette période',
-                    $chambre->getId()
+                    'La chambre "%s" (Étage %d) n\'est pas disponible pour cette période',
+                    $chambre->getType(),
+                    $chambre->getEtage()
                 ));
             }
         }
 
+        // Créer la réservation
         $reservation = new Reservation();
         $reservation->setClient($client)
             ->setHotel($hotel)
@@ -64,6 +84,7 @@ class ReservationService
             ->setDateFin($dateFin)
             ->setStatut('En attente');
 
+        // Ajouter toutes les chambres
         foreach ($chambres as $chambre) {
             $reservation->addChambre($chambre);
         }
@@ -84,7 +105,7 @@ class ReservationService
         if (!$reservation->getId()) {
             $this->entityManager->persist($reservation);
         }
-        
+
         $this->entityManager->flush();
 
         return $reservation;
@@ -123,9 +144,9 @@ class ReservationService
     public function paginateReservations(int $page, int $limit = 10, ?Hotel $hotel = null): array
     {
         $offset = ($page - 1) * $limit;
-        
+
         $qb = $this->reservationRepository->createQueryBuilder('r');
-        
+
         if ($hotel) {
             $qb->where('r.hotel = :hotel')
                 ->setParameter('hotel', $hotel);
