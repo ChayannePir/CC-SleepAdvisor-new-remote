@@ -3,23 +3,33 @@
 {% block title %}Mon Panier - SleepAdvisor{% endblock %}
 
 {% block body %}
+{# ==================================================== #}
+{# PAGE PANIER : Affichage et gestion des chambres ajoutées #}
+{# ==================================================== #}
 <div class="container-fluid py-4">
     <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
         <i class="fas fa-shopping-cart"></i> Mon Panier
     </h2>
 
     {% if basket|length > 0 %}
+        {# Panier avec contenu : affiche liste et résumé #}
         <div class="row">
+            {# ==================================================== #}
+            {# COLONNE 1 : Liste des chambres sélectionnées #}
+            {# ==================================================== #}
             <div class="col-lg-8">
                 <div class="card" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                     <div class="card-header" style="background-color: #f8f8f8; border-bottom: 1px solid #ddd;">
+                        {# En-tête : nombre total de chambres dans le panier #}
                         <h5 class="mb-0" style="color: #1a1a1a; font-weight: 500;">
                             <i class="fas fa-bed"></i> Chambres sélectionnées ({{ basket|length }})
                         </h5>
                     </div>
                     <div class="card-body">
+                        {# Boucle sur chaque chambre du panier (stocké en session) #}
                         {% for chambreKey, chambre in basket %}
                             <div class="row mb-3 pb-3" style="border-bottom: 1px solid #eee;">
+                                {# Infos chambre : type, étage, hôtel, lits, dates #}
                                 <div class="col-md-8">
                                     <h6 style="color: #1a1a1a; font-weight: 600; margin-bottom: 0.5rem;">
                                         {{ chambre.chambre_type }} - Étage {{ chambre.chambre_etage }}
@@ -33,6 +43,7 @@
                                         </span>
                                     </small>
                                 </div>
+                                {# Bouton de suppression : POST vers public_basket_remove avec chambreKey #}
                                 <div class="col-md-4 text-end">
                                     <form method="post" action="{{ path('public_basket_remove', {chambreKey: chambreKey}) }}" style="display:inline;">
                                         <button type="submit" class="btn btn-sm" style="background-color: #ff6b6b; color: white; border: none; font-weight: 500;">
@@ -46,22 +57,31 @@
                 </div>
             </div>
 
+            {# ==================================================== #}
+            {# COLONNE 2 : Résumé et actions #}
+            {# ==================================================== #}
             <div class="col-lg-4">
                 <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: linear-gradient(135deg, #d4af37 0%, #e4c158 100%);">
                     <div class="card-body" style="color: #000;">
+                        {# Titre du résumé #}
                         <h5 style="font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px;">
                             <i class="fas fa-info-circle"></i> Résumé
                         </h5>
 
+                        {# Nombre total de chambres dans le panier #}
                         <p style="margin-bottom: 0.5rem;">
                             <strong>Nombre de chambres:</strong> {{ basket_info.count }}
                         </p>
+
+                        {# Liste des hôtels impliqués #}
                         <p style="margin-bottom: 0.5rem;">
                             <strong>Hôtel(s):</strong>
                             {% for hotelId, hotelName in basket_info.hotels %}
                                 <span style="display: block; padding-left: 1rem;">{{ hotelName }}</span>
                             {% endfor %}
                         </p>
+
+                        {# Période couverte : première date de début à dernière date de fin #}
                         <p style="margin-bottom: 1.5rem;">
                             <strong>Période:</strong>
                             <span style="display: block;">
@@ -71,10 +91,12 @@
 
                         <hr style="border: 1px solid rgba(0,0,0,0.1); margin-bottom: 1.5rem;">
 
+                        {# Bouton continuer vers le checkout (finalisation) #}
                         <a href="{{ path('public_checkout') }}" class="btn w-100" style="background-color: #000; color: #d4af37; font-weight: 600; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.9rem;">
                             <i class="fas fa-arrow-right"></i> Continuer
                         </a>
 
+                        {# Bouton pour retourner à la recherche et ajouter d'autres chambres #}
                         <a href="{{ path('public_search') }}" class="btn w-100 mt-2" style="background-color: rgba(0,0,0,0.2); color: #000; font-weight: 500; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.9rem;">
                             <i class="fas fa-plus"></i> Ajouter une chambre
                         </a>
@@ -83,6 +105,7 @@
             </div>
         </div>
     {% else %}
+        {# Panier vide : message d'information avec lien de recherche #}
         <div class="alert alert-info" role="alert" style="background-color: #dbeafe; border-left: 4px solid #0284c7; color: #0c4a6e;">
             <i class="fas fa-info-circle"></i> Votre panier est vide.
             <a href="{{ path('public_search') }}" style="color: #0284c7; font-weight: 600;">Rechercher une chambre</a>
@@ -90,4 +113,3 @@
     {% endif %}
 </div>
 {% endblock %}
-

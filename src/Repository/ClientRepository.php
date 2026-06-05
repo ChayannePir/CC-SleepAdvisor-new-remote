@@ -40,4 +40,31 @@ class ClientRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * @return array{items: Client[], total: int}
+     */
+    public function paginateAdmin(int $offset, int $limit, ?string $search = null): array
+    {
+        $qb = $this->createQueryBuilder('c');
+
+        if ($search !== null && $search !== '') {
+            $qb->andWhere('c.nom LIKE :search OR c.email LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        $total = (int) (clone $qb)
+            ->select('COUNT(c.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $items = $qb
+            ->orderBy('c.nom', 'ASC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return ['items' => $items, 'total' => $total];
+    }
 }

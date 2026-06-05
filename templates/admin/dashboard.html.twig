@@ -1,87 +1,146 @@
-{% extends "base_new.html.twig" %}
+{% extends "admin/layout.html.twig" %}
 
 {% block title %}Dashboard Admin - SleepAdvisor{% endblock %}
 
-{% block body %}
-<div class="container-fluid py-4">
-    <h2 class="mb-4">
-        <i class="fas fa-tachometer-alt"></i> Tableau de bord administrateur
+{% block admin_content %}
+    {# ==================================================== #}
+    {# ADMIN DASHBOARD : Page d'accueil administrateur #}
+    {# Affiche les indicateurs clés, statistiques et réservations récentes #}
+    {# ==================================================== #}
+    <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+        <i class="fas fa-tachometer-alt"></i> Tableau de bord
     </h2>
 
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #d4af37;">
+    {# ==================================================== #}
+    {# SECTION : KPI Principales (Réservations, Taux occupation, Clients, Parc) #}
+    {# ==================================================== #}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3 mb-4">
+        {# KPI 1 : Nombre total de réservations enregistrées #}
+        <div class="col">
+            <div class="card admin-kpi-card" style="background-color: #d4af37;">
                 <div class="card-body">
-                    <h6 class="card-title" style="color: #000; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">Clients</h6>
-                    <h2 style="color: #000; font-weight: 300;">{{ stats.clients }}</h2>
-                    <small style="color: #1a1a1a;">Clients enregistrés</small>
+                    <h6 class="text-uppercase small fw-semibold mb-1" style="color: #000;">Réservations</h6>
+                    <p class="display-6 mb-0 fw-light" style="color: #000;">{{ stats.total_reservations }}</p>
+                    <small style="color: #1a1a1a;">Total enregistrées</small>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #000000;">
+        {# KPI 2 : Taux d'occupation des chambres aujourd'hui #}
+        <div class="col">
+            <div class="card admin-kpi-card text-white" style="background-color: #000;">
                 <div class="card-body">
-                    <h6 class="card-title" style="color: #d4af37; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">Chambres</h6>
-                    <h2 style="color: #fff; font-weight: 300;">{{ stats.chambres }}</h2>
-                    <small style="color: #ccc;">Chambres disponibles</small>
+                    <h6 class="text-uppercase small fw-semibold mb-1" style="color: #d4af37;">Taux d'occupation</h6>
+                    <p class="display-6 mb-0 fw-light">{{ stats.occupancy_rate }}%</p>
+                    <small class="text-secondary">{{ stats.occupied_chambres_today }} / {{ stats.total_chambres }} chambres aujourd'hui</small>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #d4af37;">
+        {# KPI 3 : Nombre total de clients actifs #}
+        <div class="col">
+            <div class="card admin-kpi-card">
                 <div class="card-body">
-                    <h6 class="card-title" style="color: #000; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">Réservations</h6>
-                    <h2 style="color: #000; font-weight: 300;">{{ stats.reservations }}</h2>
-                    <small style="color: #1a1a1a;">Réservations totales</small>
+                    <h6 class="text-uppercase small text-muted fw-semibold mb-1">Clients</h6>
+                    <p class="display-6 mb-0 fw-light">{{ stats.total_clients }}</p>
+                    <small class="text-muted">Comptes actifs</small>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #000000;">
+        {# KPI 4 : Parc hôtelier (nombre de chambres et hôtels) #}
+        <div class="col">
+            <div class="card admin-kpi-card">
                 <div class="card-body">
-                    <h6 class="card-title" style="color: #d4af37; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; font-weight: 600;">Accès rapide</h6>
-                    <small style="color: #ccc;">Gérer votre hôtel</small>
+                    <h6 class="text-uppercase small text-muted fw-semibold mb-1">Parc hôtelier</h6>
+                    <p class="display-6 mb-0 fw-light">{{ stats.total_chambres }}</p>
+                    <small class="text-muted">{{ stats.total_hotels }} hôtel(s)</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <div class="card-body" style="background-color: #fff; text-align: center;">
-                    <i class="fas fa-door-open" style="font-size: 2rem; color: #d4af37; margin-bottom: 1rem;"></i>
-                    <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Chambres</h5>
-                    <p class="card-text" style="color: #666;">Gérer votre inventaire de chambres</p>
-                    <a href="{{ path('admin_chambres_list') }}" class="btn btn-sm" style="background-color: #d4af37; color: #000; border: none; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1rem;">Gérer</a>
+    {# ==================================================== #}
+    {# SECTION : Répartition par statut (En attente / Confirmées / Annulées) #}
+    {# ==================================================== #}
+    <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+        {# Réservations en attente de confirmation #}
+        <div class="col">
+            <div class="card admin-kpi-card border-warning">
+                <div class="card-body py-3">
+                    <span class="badge bg-warning text-dark me-2">En attente</span>
+                    <strong class="fs-4">{{ stats.reservations_en_attente }}</strong>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <div class="card-body" style="background-color: #fff; text-align: center;">
-                    <i class="fas fa-calendar" style="font-size: 2rem; color: #d4af37; margin-bottom: 1rem;"></i>
-                    <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Réservations</h5>
-                    <p class="card-text" style="color: #666;">Voir et gérer les réservations</p>
-                    <a href="{{ path('admin_reservations_list') }}" class="btn btn-sm" style="background-color: #d4af37; color: #000; border: none; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1rem;">Gérer</a>
+        {# Réservations confirmées #}
+        <div class="col">
+            <div class="card admin-kpi-card border-success">
+                <div class="card-body py-3">
+                    <span class="badge bg-success me-2">Confirmées</span>
+                    <strong class="fs-4">{{ stats.reservations_confirmees }}</strong>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <div class="card-body" style="background-color: #fff; text-align: center;">
-                    <i class="fas fa-users" style="font-size: 2rem; color: #d4af37; margin-bottom: 1rem;"></i>
-                    <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Clients</h5>
-                    <p class="card-text" style="color: #666;">Gérer les clients enregistrés</p>
-                    <a href="{{ path('admin_clients_list') }}" class="btn btn-sm" style="background-color: #d4af37; color: #000; border: none; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.5rem 1rem;">Gérer</a>
+        {# Réservations annulées #}
+        <div class="col">
+            <div class="card admin-kpi-card border-secondary">
+                <div class="card-body py-3">
+                    <span class="badge bg-secondary me-2">Annulées</span>
+                    <strong class="fs-4">{{ stats.reservations_annulees }}</strong>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    {# ==================================================== #}
+    {# SECTION : Dernières réservations (8 récentes) #}
+    {# Lien pour voir la liste complète des réservations #}
+    {# ==================================================== #}
+    <div class="card admin-kpi-card">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h5 class="mb-0 text-uppercase small fw-semibold">Dernières réservations</h5>
+            <a href="{{ path('admin_reservations_list') }}" class="btn btn-sm" style="background:#d4af37;color:#000;">Voir tout</a>
+        </div>
+        <div class="table-responsive admin-table-desktop">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Numéro</th>
+                        <th class="d-none d-md-table-cell">Client</th>
+                        <th class="d-none d-lg-table-cell">Hôtel</th>
+                        <th>Statut</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in stats.recent_reservations %}
+                        <tr>
+                            <td class="fw-medium">{{ r.numeroReservation }}</td>
+                            <td class="d-none d-md-table-cell">{{ r.client.nom }}</td>
+                            <td class="d-none d-lg-table-cell">{{ r.hotel.nom }}</td>
+                            <td><span class="badge bg-secondary">{{ r.statut }}</span></td>
+                            <td>
+                                <a href="{{ path('admin_reservation_detail', {id: r.id}) }}" class="btn btn-sm btn-outline-secondary">Détail</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5" class="text-center text-muted py-4">Aucune réservation</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="admin-cards-mobile p-3">
+            {% for r in stats.recent_reservations %}
+                <div class="admin-mobile-card">
+                    <strong>{{ r.numeroReservation }}</strong>
+                    <div class="small text-muted">{{ r.client.nom }} — {{ r.hotel.nom }}</div>
+                    <span class="badge bg-secondary">{{ r.statut }}</span>
+                    <a href="{{ path('admin_reservation_detail', {id: r.id}) }}" class="btn btn-sm btn-outline-secondary mt-2">Détail</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

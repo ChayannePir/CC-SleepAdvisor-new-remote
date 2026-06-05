@@ -6,8 +6,10 @@ use App\Entity\Reservation;
 use App\Entity\Chambre;
 use App\Entity\Client;
 use App\Entity\Hotel;
+use App\Exception\ChambreNotAvailableException;
+use App\Exception\ReservationValidationException;
 use App\Repository\ReservationRepository;
-use App\Repository\ChambreRepository;
+use App\Service\Admin\PaginationHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -21,22 +23,70 @@ class ReservationService
 {
     public function __construct(
         private ReservationRepository $reservationRepository,
-        private ChambreRepository $chambreRepository,
         private EntityManagerInterface $entityManager,
         private ValidatorInterface $validator
     ) {
     }
 
     /**
-     * Créer une nouvelle réservation
+     * Une chambre est disponible si aucune réservation active ne chevauche la période.
+     */
+    public function isChambreAvailable(
+        Chambre $chambre,
+        \DateTimeInterface $dateDebut,
+        \DateTimeInterface $dateFin,
+        ?int $excludeReservationId = null
+    ): bool {
+        if ($chambre->getId() === null) {
+            return false;
+        }
+
+        $conflicts = $this->reservationRepository->findActiveConflictingReservations(
+            $dateDebut,
+            $dateFin,
+            $chambre->getId()
+        );
+
+        if ($excludeReservationId === null) {
+            return $conflicts === [];
+        }
+
+        foreach ($conflicts as $reservation) {
+            if ($reservation->getId() !== $excludeReservationId) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Vérifie que toutes les chambres sont disponibles sur la période.
      *
-     * @param Client $client
-     * @param Hotel $hotel
-     * @param \DateTimeInterface $dateDebut
-     * @param \DateTimeInterface $dateFin
-     * @param array $chambres - Au moins une chambre obligatoire
-     * @return Reservation
-     * @throws \InvalidArgumentException
+     * @param Chambre[] $chambres
+     */
+    public function areChambresAvailable(
+        array $chambres,
+        \DateTimeInterface $dateDebut,
+        \DateTimeInterface $dateFin,
+        ?int $excludeReservationId = null
+    ): bool {
+        foreach ($chambres as $chambre) {
+            if (!$chambre instanceof Chambre) {
+                return false;
+            }
+            if (!$this->isChambreAvailable($chambre, $dateDebut, $dateFin, $excludeReservationId)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Créer une réservation (relation ternaire Client + Hôtel + une ou plusieurs Chambres).
+     *
+     * @param Chambre[] $chambres
      */
     public function createReservation(
         Client $client,
@@ -46,37 +96,30 @@ class ReservationService
         array $chambres
     ): Reservation {
         if (empty($chambres)) {
-            throw new \InvalidArgumentException('Au moins une chambre doit être réservée');
+            throw ReservationValidationException::emptyChambres();
         }
 
-        // Valider que les dates sont cohérentes
         if ($dateFin <= $dateDebut) {
-            throw new \InvalidArgumentException('La date de fin doit être après la date de début');
+            throw ReservationValidationException::invalidDates();
         }
 
-        // Vérifier la disponibilité de CHAQUE chambre
         foreach ($chambres as $chambre) {
             if (!$chambre instanceof Chambre) {
-                throw new \InvalidArgumentException('Objet chambre invalide');
+                throw ReservationValidationException::invalidChambre();
             }
 
-            // Chercher les réservations CONFIRMÉES qui chevauchent
-            $conflicts = $this->reservationRepository->findConfirmedConflictingReservations(
-                $dateDebut,
-                $dateFin,
-                $chambre->getId()
-            );
-
-            if (!empty($conflicts)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'La chambre "%s" (Étage %d) n\'est pas disponible pour cette période',
+            if ($chambre->getHotel()?->getId() !== $hotel->getId()) {
+                throw ReservationValidationException::chambreWrongHotel(
                     $chambre->getType(),
                     $chambre->getEtage()
-                ));
+                );
+            }
+
+            if (!$this->isChambreAvailable($chambre, $dateDebut, $dateFin)) {
+                throw ChambreNotAvailableException::forChambre($chambre);
             }
         }
 
-        // Créer la réservation
         $reservation = new Reservation();
         $reservation->setClient($client)
             ->setHotel($hotel)
@@ -84,7 +127,6 @@ class ReservationService
             ->setDateFin($dateFin)
             ->setStatut('En attente');
 
-        // Ajouter toutes les chambres
         foreach ($chambres as $chambre) {
             $reservation->addChambre($chambre);
         }
@@ -99,7 +141,7 @@ class ReservationService
     {
         $errors = $this->validator->validate($reservation);
         if (count($errors) > 0) {
-            throw new \InvalidArgumentException('Validation des données échouée');
+            throw ReservationValidationException::validationFailed();
         }
 
         if (!$reservation->getId()) {
@@ -121,11 +163,23 @@ class ReservationService
     }
 
     /**
-     * Confirmer une réservation
+     * Confirmer une réservation (vérifie à nouveau la disponibilité des chambres).
      */
     public function confirmReservation(Reservation $reservation): Reservation
     {
+        foreach ($reservation->getChambres() as $chambre) {
+            if (!$this->isChambreAvailable(
+                $chambre,
+                $reservation->getDateDebut(),
+                $reservation->getDateFin(),
+                $reservation->getId()
+            )) {
+                throw ChambreNotAvailableException::forChambre($chambre);
+            }
+        }
+
         $reservation->setStatut('Confirmée');
+
         return $this->saveReservation($reservation);
     }
 
@@ -135,49 +189,89 @@ class ReservationService
     public function cancelReservation(Reservation $reservation): Reservation
     {
         $reservation->setStatut('Annulée');
+
         return $this->saveReservation($reservation);
     }
 
     /**
-     * Paginer les réservations
+     * @return array{items: Reservation[], total: int, page: int, limit: int, pages: int, page_range: int[]}
      */
-    public function paginateReservations(int $page, int $limit = 10, ?Hotel $hotel = null): array
-    {
-        $offset = ($page - 1) * $limit;
-
-        $qb = $this->reservationRepository->createQueryBuilder('r');
-
-        if ($hotel) {
-            $qb->where('r.hotel = :hotel')
-                ->setParameter('hotel', $hotel);
+    public function paginateReservations(
+        int $page,
+        int $limit = 20,
+        ?Hotel $hotel = null,
+        ?string $statut = null
+    ): array {
+        if ($hotel !== null) {
+            return $this->paginateReservationsForHotel($page, $limit, $hotel, $statut);
         }
 
-        $total = (int) (clone $qb)
-            ->select('COUNT(r.id)')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        $reservations = $qb
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->orderBy('r.dateDebut', 'DESC')
-            ->getQuery()
-            ->getResult();
+        $probe = $this->reservationRepository->paginateAdmin(0, 1, $statut);
+        $meta = PaginationHelper::normalize($page, $limit, $probe['total']);
+        $result = $this->reservationRepository->paginateAdmin($meta['offset'], $meta['limit'], $statut);
 
         return [
-            'items' => $reservations,
-            'total' => $total,
-            'page' => $page,
-            'limit' => $limit,
-            'pages' => ceil($total / $limit)
+            'items' => $result['items'],
+            'total' => $meta['total'],
+            'page' => $meta['page'],
+            'limit' => $meta['limit'],
+            'pages' => $meta['pages'],
+            'page_range' => PaginationHelper::pageRange($meta['page'], $meta['pages']),
         ];
     }
 
     /**
-     * Rechercher par numéro de réservation
+     * @return array{items: Reservation[], total: int, page: int, limit: int, pages: int, page_range: int[]}
      */
+    private function paginateReservationsForHotel(
+        int $page,
+        int $limit,
+        Hotel $hotel,
+        ?string $statut
+    ): array {
+        $qb = $this->reservationRepository->createQueryBuilder('r')
+            ->where('r.hotel = :hotel')
+            ->setParameter('hotel', $hotel);
+
+        if ($statut !== null && $statut !== '') {
+            $qb->andWhere('r.statut = :statut')->setParameter('statut', $statut);
+        }
+
+        $total = (int) (clone $qb)->select('COUNT(r.id)')->getQuery()->getSingleScalarResult();
+        $meta = PaginationHelper::normalize($page, $limit, $total);
+
+        $items = $qb
+            ->setFirstResult($meta['offset'])
+            ->setMaxResults($meta['limit'])
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return [
+            'items' => $items,
+            'total' => $meta['total'],
+            'page' => $meta['page'],
+            'limit' => $meta['limit'],
+            'pages' => $meta['pages'],
+            'page_range' => PaginationHelper::pageRange($meta['page'], $meta['pages']),
+        ];
+    }
+
     public function searchByNumero(string $numero): ?Reservation
     {
         return $this->reservationRepository->findByNumero($numero);
+    }
+
+    /**
+     * @return Reservation[]
+     */
+    public function searchByNumeroLike(string $numero): array
+    {
+        return $this->reservationRepository->searchByNumeroLike($numero);
+    }
+
+    public function findWithDetails(int $id): ?Reservation
+    {
+        return $this->reservationRepository->findOneWithDetails($id);
     }
 }

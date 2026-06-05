@@ -3,15 +3,22 @@
 {% block title %}Réserver {{ chambre.type }}{% endblock %}
 
 {% block body %}
+{# ==================================================== #}
+{# PAGE DE RÉSERVATION : Détail chambre + formulaire dates #}
+{# ==================================================== #}
 <div class="container-fluid py-4">
     <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
         <i class="fas fa-check"></i> Réserver une chambre
     </h2>
 
     <div class="row">
+        {# ==================================================== #}
+        {# COLONNE 1 : Détails de la chambre #}
+        {# ==================================================== #}
         <div class="col-md-6">
             <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                 <div class="card-body" style="background-color: #fff;">
+                    {# Titre et informations de base de la chambre #}
                     <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">{{ chambre.type }} - Étage {{ chambre.etage }}</h5>
                     <p class="card-text" style="color: #666;">
                         <small><strong>Hôtel:</strong> {{ chambre.hotel.nom }}</small><br>
@@ -21,23 +28,30 @@
             </div>
         </div>
 
+        {# ==================================================== #}
+        {# COLONNE 2 : Formulaire de saisie des dates #}
+        {# ==================================================== #}
         <div class="col-md-6">
             <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                 <div class="card-body" style="background-color: #fff;">
                     <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">Détails de la réservation</h5>
+                    {# Formulaire POST pour ajouter cette chambre au panier avec les dates spécifiées #}
                     <form method="post">
+                        {# Champ date d'arrivée - obligatoire #}
                         <div class="mb-3">
                             <label for="date_debut" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Date d'arrivée *</label>
-                            <input type="date" class="form-control" id="date_debut" name="date_debut" required style="border: 1px solid #ddd; padding: 0.75rem;">
+                            <input type="date" class="form-control" id="date_debut" name="date_debut" value="{{ date_debut }}" required style="border: 1px solid #ddd; padding: 0.75rem;">
                         </div>
 
+                        {# Champ date de départ - obligatoire #}
                         <div class="mb-3">
                             <label for="date_fin" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Date de départ *</label>
-                            <input type="date" class="form-control" id="date_fin" name="date_fin" required style="border: 1px solid #ddd; padding: 0.75rem;">
+                            <input type="date" class="form-control" id="date_fin" name="date_fin" value="{{ date_fin }}" required style="border: 1px solid #ddd; padding: 0.75rem;">
                         </div>
 
+                        {# Bouton d'ajout au panier - redirige vers le panier après succès #}
                         <button type="submit" class="btn w-100" style="background-color: #d4af37; color: #000; font-weight: 500; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem;">
-                            <i class="fas fa-check"></i> Confirmer la réservation
+                            <i class="fas fa-cart-plus"></i> Ajouter au panier
                         </button>
                     </form>
                 </div>

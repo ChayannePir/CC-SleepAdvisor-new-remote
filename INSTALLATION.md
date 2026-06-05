@@ -154,10 +154,10 @@ Puis dans la console interactive:
 ```php
 // Créer un client
 $client = new App\Entity\Client();
-$client->setEmail('client@example.com');
-$client->setPassword($passwordHasher->hashPassword($client, 'password123'));
+$client->setEmail('client1@example.com');
+$client->setPassword($passwordHasher->hashPassword($client, 'client123'));
 $client->setTelephone('06 01 02 03 04');
-$client->setNom('Jean Dupont');
+$client->setNom('Alice Martin');
 $client->setAdresse('123 Rue de Paris');
 
 $entityManager->persist($client);

@@ -198,7 +198,7 @@ php -S localhost:8000 -t public/
 
 - **URL**: http://localhost:8000
 - **Inscription**: Créer un compte client
-- **Admin**: Créer un utilisateur admin dans la BD (email: admin@example.com)
+- **Admin**: gestionnaire@hotelparis.com / admin123
 
 ## 🎓 Points Forts de Votre Application
 

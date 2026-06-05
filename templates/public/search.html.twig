@@ -3,30 +3,40 @@
 {% block title %}Rechercher une chambre - SleepAdvisor{% endblock %}
 
 {% block body %}
+{# ==================================================== #}
+{# PAGE DE RECHERCHE : Formulaire et résultats #}
+{# ==================================================== #}
 <div class="container-fluid py-4">
     <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
         <i class="fas fa-search"></i> Rechercher une chambre
     </h2>
 
+    {# ==================================================== #}
+    {# SECTION FORMULAIRE : Filtres de recherche #}
+    {# ==================================================== #}
     <div class="card mb-4" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
         <div class="card-body" style="background-color: #fff;">
             <form method="post" class="row g-3">
+                {# Champ date d'arrivée - format Y-m-d pour le type="date" HTML #}
                 <div class="col-md-4">
                     <label for="date_debut" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Date d'arrivée</label>
-                    <input type="date" class="form-control" id="date_debut" name="date_debut" 
-                           value="{{ date_debut|date('Y-m-d') if date_debut }}" required style="border: 1px solid #ddd; padding: 0.75rem;">
+                    <input type="date" class="form-control" id="date_debut" name="date_debut"
+                           value="{{ date_debut ? date_debut|date('Y-m-d') : '' }}" required style="border: 1px solid #ddd; padding: 0.75rem;">
                 </div>
 
+                {# Champ date de départ - format Y-m-d pour le type="date" HTML #}
                 <div class="col-md-4">
                     <label for="date_fin" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Date de départ</label>
-                    <input type="date" class="form-control" id="date_fin" name="date_fin" 
-                           value="{{ date_fin|date('Y-m-d') if date_fin }}" required style="border: 1px solid #ddd; padding: 0.75rem;">
+                    <input type="date" class="form-control" id="date_fin" name="date_fin"
+                           value="{{ date_fin ? date_fin|date('Y-m-d') : '' }}" required style="border: 1px solid #ddd; padding: 0.75rem;">
                 </div>
 
+                {# Filtre optionnel par hôtel - si aucun hôtel sélectionné, affiche "Tous les hôtels" #}
                 <div class="col-md-4">
                     <label for="hotel_id" class="form-label" style="color: #1a1a1a; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Hôtel (optionnel)</label>
                     <select class="form-select" id="hotel_id" name="hotel_id" style="border: 1px solid #ddd; padding: 0.75rem;">
                         <option value="">Tous les hôtels</option>
+                        {# Boucle sur la liste des hôtels disponibles #}
                         {% for hotel in hotels %}
                             <option value="{{ hotel.id }}" {% if hotel.id == hotel_id %}selected{% endif %}>
                                 {{ hotel.nom }} ({{ hotel.categorie }})
@@ -35,6 +45,7 @@
                     </select>
                 </div>
 
+                {# Bouton de soumission du formulaire de recherche #}
                 <div class="col-12">
                     <button type="submit" class="btn" style="background-color: #d4af37; color: #000; font-weight: 500; border: none; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.75rem 1.5rem;">
                         <i class="fas fa-search"></i> Rechercher
@@ -44,43 +55,85 @@
         </div>
     </div>
 
-    <div class="row">
-        {% if chambres|length > 0 %}
-            {% for chambre in chambres %}
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
-                        <div class="card-body" style="background-color: #fff;">
-                            <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">{{ chambre.type }} - Étage {{ chambre.etage }}</h5>
-                            <p class="card-text" style="color: #666;">
-                                <small><strong>Hôtel:</strong> {{ chambre.hotel.nom }}</small><br>
-                                <small><strong>Lits:</strong> {{ chambre.nombreLits }}</small><br>
-                                <small><strong>Catégorie:</strong> {{ chambre.hotel.categorie }}</small>
-                            </p>
-                        </div>
-                        <div class="card-footer" style="background-color: #f8f8f8; border: none;">
-                            <a href="{{ path('public_chambre_detail', {id: chambre.id}) }}" class="btn btn-sm" style="background-color: #fff; color: #d4af37; border: 1px solid #d4af37; font-weight: 500;">
-                                <i class="fas fa-eye"></i> Détails
-                            </a>
-                            <a href="{{ path('public_reserver_chambre', {id: chambre.id}) }}" class="btn btn-sm" style="background-color: #d4af37; color: #000; border: none; font-weight: 500;">
-                                <i class="fas fa-check"></i> Réserver
-                            </a>
+    {# ==================================================== #}
+    {# SECTION RÉSULTATS : Affichage des chambres disponibles #}
+    {# ==================================================== #}
+
+    {% if chambres|length > 0 %}
+        {# Si des chambres sont disponibles, affiche le formulaire d'ajout au panier #}
+        <form method="post" action="{{ path('public_basket_add') }}">
+            {% if date_debut and date_fin %}
+                {# Transmet les dates sélectionnées au panier en tant que champs cachés #}
+                <input type="hidden" name="date_debut" value="{{ date_debut|date('Y-m-d') }}">
+                <input type="hidden" name="date_fin" value="{{ date_fin|date('Y-m-d') }}">
+
+                {# En-tête des résultats avec nombre de chambres et bouton d'ajout au panier #}
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <p class="mb-0" style="color: #666;">
+                        <strong>{{ chambres|length }}</strong> chambre(s) disponible(s) —
+                        cochez une ou plusieurs chambres, puis ajoutez-les au panier.
+                    </p>
+                    <button type="submit" class="btn" style="background-color: #d4af37; color: #000; font-weight: 600; border: none;">
+                        <i class="fas fa-cart-plus"></i> Ajouter la sélection au panier
+                    </button>
+                </div>
+            {% endif %}
+
+            {# Grille des chambres disponibles - utilisé Bootstrap responsive grid #}
+            <div class="row">
+                {# Boucle sur chaque chambre disponible #}
+                {% for chambre in chambres %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                            {# En-tête de la carte : checkbox pour sélectionner la chambre si les dates sont présentes #}
+                            {% if date_debut and date_fin %}
+                            <div class="card-header" style="background-color: #f8f8f8; border: none;">
+                                <div class="form-check">
+                                    {# Checkbox pour sélection multiple d'ajout au panier #}
+                                    <input class="form-check-input" type="checkbox" name="chambre_ids[]" value="{{ chambre.id }}" id="chambre_{{ chambre.id }}">
+                                    <label class="form-check-label" for="chambre_{{ chambre.id }}" style="font-weight: 500;">
+                                        Sélectionner
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {# Corps de la carte : informations de la chambre #}
+                            <div class="card-body" style="background-color: #fff;">
+                                <h5 class="card-title" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;">{{ chambre.type }} - Étage {{ chambre.etage }}</h5>
+                                <p class="card-text" style="color: #666;">
+                                    <small><strong>Hôtel:</strong> {{ chambre.hotel.nom }}</small><br>
+                                    <small><strong>Lits:</strong> {{ chambre.nombreLits }}</small><br>
+                                    <small><strong>Catégorie:</strong> {{ chambre.hotel.categorie }}</small>
+                                </p>
+                            </div>
+
+                            {# Pied de la carte : boutons d'action (détails, réserver) #}
+                            <div class="card-footer" style="background-color: #f8f8f8; border: none;">
+                                {# Lien vers la page de détail de la chambre avec pré-remplissage des dates #}
+                                <a href="{{ path('public_chambre_detail', {id: chambre.id, date_debut: date_debut ? date_debut|date('Y-m-d') : '', date_fin: date_fin ? date_fin|date('Y-m-d') : ''}) }}" class="btn btn-sm" style="background-color: #fff; color: #d4af37; border: 1px solid #d4af37; font-weight: 500;">
+                                    <i class="fas fa-eye"></i> Détails
+                                </a>
+                                {# Lien direct vers la page de réservation de cette chambre #}
+                                <a href="{{ path('public_reserver_chambre', {id: chambre.id, date_debut: date_debut ? date_debut|date('Y-m-d') : '', date_fin: date_fin ? date_fin|date('Y-m-d') : ''}) }}" class="btn btn-sm" style="background-color: #d4af37; color: #000; border: none; font-weight: 500;">
+                                    <i class="fas fa-check"></i> Réserver
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        {% elseif date_debut and date_fin %}
-            <div class="col-12">
-                <div class="alert" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a;">
-                    <i class="fas fa-info-circle"></i> Aucune chambre disponible pour cette période.
-                </div>
+                {% endfor %}
             </div>
-        {% else %}
-            <div class="col-12">
-                <div class="alert" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a;">
-                    <i class="fas fa-info-circle"></i> Sélectionnez des dates pour rechercher.
-                </div>
-            </div>
-        {% endif %}
-    </div>
+        </form>
+    {% elseif date_debut and date_fin %}
+        {# Message si recherche effectuée mais aucune chambre disponible #}
+        <div class="alert" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a;">
+            <i class="fas fa-info-circle"></i> Aucune chambre disponible pour cette période.
+        </div>
+    {% else %}
+        {# Message si aucune recherche effectuée (dates non remplies) #}
+        <div class="alert" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a;">
+            <i class="fas fa-info-circle"></i> Sélectionnez des dates pour rechercher.
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

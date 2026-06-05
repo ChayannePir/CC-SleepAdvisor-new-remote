@@ -3,40 +3,59 @@
 {% block title %}Mes réservations - SleepAdvisor{% endblock %}
 
 {% block body %}
+{# ==================================================== #}
+{# PAGE ESPACE CLIENT : Liste des réservations personnelles #}
+{# ==================================================== #}
 <div class="container-fluid py-4">
     <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
         <i class="fas fa-list"></i> Mes réservations
     </h2>
 
     {% if reservations|length > 0 %}
+        {# Tableau responsive affichant toutes les réservations du client connecté #}
         <div class="table-responsive">
             <table class="table table-hover mb-0" style="background-color: #fff;">
+                {# En-têtes du tableau #}
                 <thead style="background-color: #f8f8f8; border-bottom: 2px solid #d4af37;">
                     <tr>
+                        {# En-tête : Numéro de réservation #}
                         <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Numéro</th>
+                        {# En-tête : Nom de l'hôtel #}
                         <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Hôtel</th>
+                        {# En-tête : Période de réservation #}
                         <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Dates</th>
+                        {# En-tête : Nombre de chambres #}
                         <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Chambres</th>
+                        {# En-tête : Statut de la réservation #}
                         <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Statut</th>
+                        {# En-tête : Actions disponibles #}
                         <th style="color: #1a1a1a; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 1rem;">Actions</th>
                     </tr>
                 </thead>
+                {# Corps du tableau #}
                 <tbody>
+                    {# Boucle sur les réservations du client #}
                     {% for reservation in reservations %}
                         <tr>
+                            {# Colonne : Numéro de réservation unique #}
                             <td style="padding: 1rem; color: #1a1a1a; font-weight: 500;">{{ reservation.numeroReservation }}</td>
+                            {# Colonne : Nom de l'hôtel #}
                             <td style="padding: 1rem; color: #1a1a1a;">{{ reservation.hotel.nom }}</td>
+                            {# Colonne : Période (date début au date fin au format d/m/Y) #}
                             <td style="padding: 1rem; color: #1a1a1a;">
                                 {{ reservation.dateDebut|date('d/m/Y') }} - {{ reservation.dateFin|date('d/m/Y') }}
                             </td>
+                            {# Colonne : Nombre de chambres réservées #}
                             <td style="padding: 1rem; color: #1a1a1a;">{{ reservation.chambres|length }}</td>
+                            {# Colonne : Badge avec le statut (En attente, Confirmée, Annulée) #}
                             <td style="padding: 1rem;">
                                 <span style="background-color: #d4af37; color: #000; padding: 0.4rem 0.8rem; border-radius: 4px; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
                                     {{ reservation.statut }}
                                 </span>
                             </td>
+                            {# Colonne : Lien pour afficher les détails et ajouter des commentaires #}
                             <td style="padding: 1rem;">
-                                <a href="{{ path('client_reservation_detail', {id: reservation.id}) }}" 
+                                <a href="{{ path('client_reservation_detail', {id: reservation.id}) }}"
                                    class="btn btn-sm" style="background-color: transparent; color: #d4af37; border: 1px solid #d4af37; font-weight: 500; font-size: 0.85rem;">
                                     <i class="fas fa-eye"></i> Détails
                                 </a>
@@ -47,6 +66,7 @@
             </table>
         </div>
     {% else %}
+        {# Message vide si aucune réservation #}
         <div class="alert" role="alert" style="background-color: #fffbeb; border-left: 4px solid #fbbf24; color: #1a1a1a;">
             <i class="fas fa-info-circle"></i> Vous n'avez pas encore de réservation.
         </div>
