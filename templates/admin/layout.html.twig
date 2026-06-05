@@ -1,0 +1,87 @@
+{% extends "base_new.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .admin-sidebar {
+            background: #1a1a1a;
+            border-radius: 0.5rem;
+        }
+        .admin-sidebar .nav-link {
+            color: #ccc;
+            padding: 0.65rem 1rem;
+            border-radius: 0.35rem;
+            font-size: 0.9rem;
+        }
+        .admin-sidebar .nav-link:hover,
+        .admin-sidebar .nav-link.active {
+            background: rgba(212, 175, 55, 0.15);
+            color: #d4af37;
+        }
+        .admin-kpi-card {
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            height: 100%;
+        }
+        /* Cartes mobiles pour tableaux admin */
+        @media (max-width: 767.98px) {
+            .admin-table-desktop { display: none !important; }
+            .admin-cards-mobile { display: block !important; }
+        }
+        @media (min-width: 768px) {
+            .admin-table-desktop { display: block !important; }
+            .admin-cards-mobile { display: none !important; }
+        }
+        .admin-mobile-card {
+            border: 1px solid #eee;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #fff;
+        }
+        .table-responsive {
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="row g-4">
+    <aside class="col-12 col-md-4 col-lg-3 col-xl-2 col-xxl-2">
+        <nav class="admin-sidebar p-3 sticky-top" style="top: 5rem;">
+            <h6 class="text-uppercase mb-3" style="color: #d4af37; letter-spacing: 0.5px; font-size: 0.75rem;">Administration</h6>
+            <ul class="nav flex-column gap-1">
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.attributes.get('_route') == 'admin_dashboard' %}active{% endif %}" href="{{ path('admin_dashboard') }}">
+                        <i class="fas fa-tachometer-alt me-2"></i> Tableau de bord
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_chambre' %}active{% endif %}" href="{{ path('admin_chambres_list') }}">
+                        <i class="fas fa-door-open me-2"></i> Chambres
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_hotel' %}active{% endif %}" href="{{ path('admin_hotels_list') }}">
+                        <i class="fas fa-hotel me-2"></i> Hôtels
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_reservation' %}active{% endif %}" href="{{ path('admin_reservations_list') }}">
+                        <i class="fas fa-calendar me-2"></i> Réservations
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_client' %}active{% endif %}" href="{{ path('admin_clients_list') }}">
+                        <i class="fas fa-users me-2"></i> Clients
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="col-12 col-md-8 col-lg-9 col-xl-10 col-xxl-10">
+        {% block admin_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}
