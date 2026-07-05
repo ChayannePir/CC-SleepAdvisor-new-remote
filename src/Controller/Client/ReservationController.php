@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 /**
  * Contrôleur pour l'espace client
  * Gère les réservations et commentaires des clients
- * 
+ *
  * @package App\Controller\Client
  */
 #[Route('/client')]
@@ -25,6 +25,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ReservationController extends AbstractController
 {
     #[Route('/reservations', name: 'client_reservations', methods: ['GET'])]
+    /**
+     * Liste des réservations du client connecté.
+     *
+     * @param ReservationRepository $reservationRepository
+     * @return Response
+     */
     public function mesReservations(ReservationRepository $reservationRepository): Response
     {
         /** @var Client $user */
@@ -37,6 +43,13 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/reservation/{id}', name: 'client_reservation_detail', methods: ['GET'])]
+    /**
+     * Détail d'une réservation appartenant au client courant.
+     * Vérifie le propriétaire puis affiche le détail.
+     *
+     * @param Reservation $reservation
+     * @return Response
+     */
     public function detailReservation(Reservation $reservation): Response
     {
         /** @var Client $user */
@@ -52,6 +65,14 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/reservation/{id}/commentaire', name: 'client_add_commentaire', methods: ['POST'])]
+    /**
+     * Ajoute un commentaire (demande spéciale) à la réservation du client.
+     *
+     * @param Reservation $reservation
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     public function addCommentaire(
         Reservation $reservation,
         Request $request,
@@ -81,6 +102,13 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/reservation/{id}/annuler', name: 'client_cancel_reservation', methods: ['POST'])]
+    /**
+     * Permet au client d'annuler sa propre réservation.
+     *
+     * @param Reservation $reservation
+     * @param ReservationService $reservationService
+     * @return Response
+     */
     public function cancelReservation(
         Reservation $reservation,
         ReservationService $reservationService

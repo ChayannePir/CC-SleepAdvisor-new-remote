@@ -58,4 +58,13 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form');
     }
+
+    public function testResetPasswordPageWithInvalidToken(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/reinitialiser-mot-de-passe/token-invalide');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('body', 'invalide');
+    }
 }

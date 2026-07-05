@@ -144,14 +144,19 @@ Accédez à `http://localhost:8000` dans votre navigateur.
 
 ### Comptes de test
 
-#### Client
+#### Client 1
 
-- Email: `client@example.com`
-- Mot de passe: `password123`
+- Email: `client1@example.com`
+- Mot de passe: `client123`
 
-#### Admin
+#### Client 2
 
-- Email: `admin@example.com`
+- Email: `client2@example.com`
+- Mot de passe: `client123`
+
+#### Admin (Gestionnaire)
+
+- Email: `gestionnaire@hotelparis.com`
 - Mot de passe: `admin123`
 
 ## 🔐 Authentification

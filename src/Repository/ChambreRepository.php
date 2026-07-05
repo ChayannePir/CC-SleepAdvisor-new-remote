@@ -37,31 +37,92 @@ class ChambreRepository extends ServiceEntityRepository
     }
 
     /**
-     * Chercher chambres disponibles pour une plage de dates
-     * Une chambre est disponible si elle n'a PAS de réservation CONFIRMÉE qui chevauche
-     *
-     * Les réservations "En attente" et "Annulée" ne bloquent pas une chambre
+     * Chambres libres sur une plage de dates.
+     * Disponible = aucune réservation active (statut différent de « Annulée ») qui chevauche.
      */
     public function findAvailableChambres(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, ?Hotel $hotel = null): array
     {
-        $qb = $this->createQueryBuilder('c');
-
-        if ($hotel) {
-            $qb->where('c.hotel = :hotel')
-                ->setParameter('hotel', $hotel);
-        }
-
-        $qb->leftJoin('c.reservations', 'r',
-            \Doctrine\ORM\Query\Expr\Join::WITH,
-            'r.statut = :confirmed AND r.dateDebut < :dateFin AND r.dateFin > :dateDebut'
-        )
-            ->where('r.id IS NULL')
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin(
+                'c.reservations',
+                'r',
+                \Doctrine\ORM\Query\Expr\Join::WITH,
+                'r.statut != :cancelled AND r.dateDebut < :dateFin AND r.dateFin > :dateDebut'
+            )
+            ->andWhere('r.id IS NULL')
             ->setParameter('dateDebut', $dateDebut)
             ->setParameter('dateFin', $dateFin)
-            ->setParameter('confirmed', 'Confirmée')
+            ->setParameter('cancelled', 'Annulée')
             ->orderBy('c.etage', 'ASC')
             ->groupBy('c.id');
 
+        if ($hotel !== null) {
+            $qb->andWhere('c.hotel = :hotel')
+                ->setParameter('hotel', $hotel);
+        }
+
         return $qb->getQuery()->getResult();
+    }
+
+    public function countAll(): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * Liste paginée avec filtres (gros volumes).
+     *
+     * @return array{items: Chambre[], total: int}
+     */
+    public function paginateAdmin(
+        int $offset,
+        int $limit,
+        ?string $search = null,
+        ?int $hotelId = null,
+        ?string $type = null
+    ): array {
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin('c.hotel', 'h')
+            ->addSelect('h');
+
+        if ($search !== null && $search !== '') {
+            if (ctype_digit($search)) {
+                $qb->andWhere('c.type LIKE :search OR h.nom LIKE :search OR c.etage = :etageSearch')
+                    ->setParameter('search', '%' . $search . '%')
+                    ->setParameter('etageSearch', (int) $search);
+            } else {
+                $qb->andWhere('c.type LIKE :search OR h.nom LIKE :search')
+                    ->setParameter('search', '%' . $search . '%');
+            }
+        }
+
+        if ($hotelId !== null && $hotelId > 0) {
+            $qb->andWhere('c.hotel = :hotelId')
+                ->setParameter('hotelId', $hotelId);
+        }
+
+        if ($type !== null && $type !== '') {
+            $qb->andWhere('c.type = :type')
+                ->setParameter('type', $type);
+        }
+
+        $total = (int) (clone $qb)
+            ->select('COUNT(DISTINCT c.id)')
+            ->resetDQLPart('orderBy')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $items = $qb
+            ->orderBy('h.nom', 'ASC')
+            ->addOrderBy('c.etage', 'ASC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return ['items' => $items, 'total' => $total];
     }
 }

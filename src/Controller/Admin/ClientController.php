@@ -3,7 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Client;
-use App\Repository\ClientRepository;
 use App\Service\ClientService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,40 +10,45 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * Contrôleur admin pour les clients
- * CRUD pour les clients avec pagination et recherche
- * 
- * @package App\Controller\Admin
- */
 #[Route('/admin/clients')]
 #[IsGranted('ROLE_ADMIN')]
 class ClientController extends AbstractController
 {
     #[Route('', name: 'admin_clients_list', methods: ['GET'])]
+    /**
+     * Liste paginée des clients avec recherche par nom/email.
+     *
+     * @param Request $request
+     * @param ClientService $clientService
+     * @return Response
+     */
     public function index(Request $request, ClientService $clientService): Response
     {
         $page = $request->query->getInt('page', 1);
-        $search = $request->query->getString('search', '');
+        $limit = $request->query->getInt('limit', 20);
+        $search = trim($request->query->getString('search', ''));
+        $searchParam = $search !== '' ? $search : null;
 
-        if ($search) {
-            $clients = $clientService->searchClients($search);
-            $total = count($clients);
-        } else {
-            $data = $clientService->paginateClients($page, 10);
-            $clients = $data['items'];
-            $total = $data['total'];
-        }
+        $data = $clientService->paginateClients($page, $limit, $searchParam);
 
         return $this->render('admin/clients/list.html.twig', [
-            'clients' => $clients,
-            'total' => $total,
-            'page' => $page,
+            'clients' => $data['items'],
+            'total' => $data['total'],
+            'page' => $data['page'],
+            'pages' => $data['pages'],
+            'limit' => $data['limit'],
+            'page_range' => $data['page_range'],
             'search' => $search,
         ]);
     }
 
-    #[Route('/{id}', name: 'admin_client_detail', methods: ['GET'])]
+    #[Route('/{id}', name: 'admin_client_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    /**
+     * Détail d'un client.
+     *
+     * @param Client $client
+     * @return Response
+     */
     public function detail(Client $client): Response
     {
         return $this->render('admin/clients/detail.html.twig', [
@@ -52,7 +56,14 @@ class ClientController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/supprimer', name: 'admin_client_delete', methods: ['POST'])]
+    #[Route('/{id}/supprimer', name: 'admin_client_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    /**
+     * Suppression d'un client.
+     *
+     * @param Client $client
+     * @param ClientService $clientService
+     * @return Response
+     */
     public function delete(Client $client, ClientService $clientService): Response
     {
         try {

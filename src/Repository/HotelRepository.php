@@ -28,4 +28,12 @@ class HotelRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function countAll(): int
+    {
+        return (int) $this->createQueryBuilder('h')
+            ->select('COUNT(h.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

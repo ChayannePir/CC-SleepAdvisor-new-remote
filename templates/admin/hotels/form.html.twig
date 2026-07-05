@@ -1,0 +1,46 @@
+{% extends "admin/layout.html.twig" %}
+
+{% block title %}{{ hotel.id ? 'Éditer' : 'Créer' }} un hôtel - Admin{% endblock %}
+
+{% block admin_content %}
+    <h2 class="mb-4" style="color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+        <i class="fas fa-hotel"></i> {{ hotel.id ? 'Éditer l\'hôtel' : 'Créer un hôtel' }}
+    </h2>
+
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="nom" class="form-label small text-uppercase fw-semibold">Nom de l'hôtel *</label>
+                            <input type="text" class="form-control" id="nom" name="nom" value="{{ hotel.nom }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="adresse" class="form-label small text-uppercase fw-semibold">Adresse *</label>
+                            <input type="text" class="form-control" id="adresse" name="adresse" value="{{ hotel.adresse }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="categorie" class="form-label small text-uppercase fw-semibold">Catégorie *</label>
+                            <select class="form-select" id="categorie" name="categorie" required>
+                                <option value="">Sélectionner</option>
+                                {% for catOption in ['*', '**', '***', '****', '*****'] %}
+                                    <option value="{{ catOption }}" {% if hotel.categorie == catOption %}selected{% endif %}>{{ catOption }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ path('admin_hotels_list') }}" class="btn btn-outline-secondary">Annuler</a>
+                            <button type="submit" class="btn" style="background-color: #d4af37; color: #000;">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
