@@ -51,8 +51,10 @@ class SearchController extends AbstractController
         if ($request->isMethod('POST')) {
             $dateDebutStr = $request->request->getString('date_debut');
             $dateFinStr = $request->request->getString('date_fin');
-            $hotelId = $request->request->getInt('hotel_id');
-        } elseif ($request->query->has('hotel_id')) {
+            $hotelId = $request->request->has('hotel_id') && $request->request->get('hotel_id') !== ''
+                ? $request->request->getInt('hotel_id')
+                : null;
+        } elseif ($request->query->has('hotel_id') && $request->query->get('hotel_id') !== '') {
             $hotelId = $request->query->getInt('hotel_id');
         }
 
