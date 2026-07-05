@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Chambre;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Service pour gérer le panier de réservation
@@ -16,8 +16,16 @@ class BasketReservationService
     private const BASKET_KEY = 'reservation_basket';
 
     public function __construct(
-        private SessionInterface $session
+        private RequestStack $requestStack
     ) {
+    }
+
+    /**
+     * Obtenir la session courante
+     */
+    private function getSession()
+    {
+        return $this->requestStack->getSession();
     }
 
     /**
@@ -44,7 +52,7 @@ class BasketReservationService
                 'added_at' => date('Y-m-d H:i:s'),
             ];
 
-            $this->session->set(self::BASKET_KEY, $basket);
+            $this->getSession()->set(self::BASKET_KEY, $basket);
         }
     }
 
@@ -57,7 +65,7 @@ class BasketReservationService
 
         if (isset($basket[$chambreKey])) {
             unset($basket[$chambreKey]);
-            $this->session->set(self::BASKET_KEY, $basket);
+            $this->getSession()->set(self::BASKET_KEY, $basket);
         }
     }
 
@@ -66,7 +74,7 @@ class BasketReservationService
      */
     public function getBasket(): array
     {
-        return $this->session->get(self::BASKET_KEY, []);
+        return $this->getSession()->get(self::BASKET_KEY, []);
     }
 
     /**
@@ -74,7 +82,7 @@ class BasketReservationService
      */
     public function clearBasket(): void
     {
-        $this->session->remove(self::BASKET_KEY);
+        $this->getSession()->remove(self::BASKET_KEY);
     }
 
     /**
