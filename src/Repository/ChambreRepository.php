@@ -38,7 +38,8 @@ class ChambreRepository extends ServiceEntityRepository
 
     /**
      * Chambres libres sur une plage de dates.
-     * Disponible = aucune réservation active (statut différent de « Annulée ») qui chevauche.
+     * Disponible = aucune réservation "Confirmée" qui chevauche les dates.
+     * Les réservations "En attente" ne bloquent pas les disponibilités.
      */
     public function findAvailableChambres(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, ?Hotel $hotel = null): array
     {
@@ -47,12 +48,12 @@ class ChambreRepository extends ServiceEntityRepository
                 'c.reservations',
                 'r',
                 \Doctrine\ORM\Query\Expr\Join::WITH,
-                'r.statut != :cancelled AND r.dateDebut < :dateFin AND r.dateFin > :dateDebut'
+                'r.statut = :confirmed AND r.dateDebut < :dateFin AND r.dateFin > :dateDebut'
             )
             ->andWhere('r.id IS NULL')
             ->setParameter('dateDebut', $dateDebut)
             ->setParameter('dateFin', $dateFin)
-            ->setParameter('cancelled', 'Annulée')
+            ->setParameter('confirmed', 'Confirmée')
             ->orderBy('c.etage', 'ASC')
             ->groupBy('c.id');
 

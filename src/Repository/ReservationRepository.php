@@ -74,17 +74,17 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
     /**
-     * Chambres distinctes occupées à une date (réservations actives).
+     * Chambres distinctes occupées à une date (réservations confirmées seulement).
      */
     public function countOccupiedChambresOnDate(\DateTimeInterface $date): int
     {
         return (int) $this->createQueryBuilder('r')
             ->select('COUNT(DISTINCT ch.id)')
             ->innerJoin('r.chambres', 'ch')
-            ->where('r.statut != :cancelled')
+            ->where('r.statut = :confirmed')
             ->andWhere('r.dateDebut <= :date')
             ->andWhere('r.dateFin > :date')
-            ->setParameter('cancelled', 'Annulée')
+            ->setParameter('confirmed', 'Confirmée')
             ->setParameter('date', $date)
             ->getQuery()
             ->getSingleScalarResult();
@@ -161,7 +161,7 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
     /**
-     * Réservations actives (non annulées) en conflit sur une chambre et une période.
+     * Réservations actives (confirmées) en conflit sur une chambre et une période.
      */
     public function findActiveConflictingReservations(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, int $chambreId): array
     {
@@ -169,7 +169,8 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
     /**
-     * Vérifier les chevauchements de dates (réservations actives = statut ≠ Annulée)
+     * Vérifier les chevauchements de dates (réservations confirmées seulement).
+     * Les réservations "En attente" ne bloquent pas les disponibilités.
      */
     public function findConflictingReservations(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, int $chambreId): array
     {
@@ -179,11 +180,11 @@ class ReservationRepository extends ServiceEntityRepository
             ->andWhere(
                 'r.dateDebut < :dateFin AND r.dateFin > :dateDebut'
             )
-            ->andWhere('r.statut != :cancelled')
+            ->andWhere('r.statut = :confirmed')
             ->setParameter('chambreId', $chambreId)
             ->setParameter('dateDebut', $dateDebut)
             ->setParameter('dateFin', $dateFin)
-            ->setParameter('cancelled', 'Annulée')
+            ->setParameter('confirmed', 'Confirmée')
             ->getQuery()
             ->getResult();
     }
