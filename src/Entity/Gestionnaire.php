@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Entité Gestionnaire - Hérite de User pour l'authentification
  * Gestionnaire d'un hôtel avec droits administrateur
- * 
+ *
  * @package App\Entity
  */
 #[ORM\Entity(repositoryClass: GestionnaireRepository::class)]
@@ -21,7 +21,8 @@ class Gestionnaire extends User
     private ?string $nom = null;
 
     #[ORM\ManyToOne(targetEntity: Hotel::class, inversedBy: 'gestionnaires')]
-    #[ORM\JoinColumn(nullable: false)]
+    // Rendre nullable pour que les utilisateurs non-gestionnaires (clients) puissent exister
+    #[ORM\JoinColumn(nullable: true)]
     private ?Hotel $hotel = null;
 
     public function __construct()
