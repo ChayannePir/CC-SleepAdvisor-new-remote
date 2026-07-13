@@ -53,11 +53,15 @@ php -S localhost:8000 -t public/
 
 ## 📋 Comptes de test (si fixtures chargées)
 
+
 | Email                       | Mot de passe | Rôle   |
 | --------------------------- | ------------ | ------ |
 | gestionnaire@hotelparis.com | admin123     | Admin  |
-| client1@example.com         | client123    | Client |
-| client2@example.com         | client123    | Client |
+| admin.marseille@hotel.fr    | 123admin     | Admin  |
+| alice.martin@dawan.com      | alice26      | Client |
+| bob.dylan@yahoo.com         | bob26bob     | Client |
+| camille.dubois@gmail.com    | camille99    | Client |
+
 
 ## 🔍 Vérifier l'installation
 
@@ -138,5 +142,3 @@ Pour plus d'aide, consultez:
 - Les comments dans le code (PHPDoc complet)
 
 ---
-
-**Bon développement! 🎉**

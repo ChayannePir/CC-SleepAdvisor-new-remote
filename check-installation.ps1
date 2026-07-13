@@ -1,4 +1,4 @@
-# Script de vérification pour Windows PowerShell
+﻿# Script de vérification pour Windows PowerShell
 # Usage: .\check-installation.ps1
 
 Write-Host "================================"
