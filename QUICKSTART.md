@@ -138,5 +138,3 @@ Pour plus d'aide, consultez:
 - Les comments dans le code (PHPDoc complet)
 
 ---
-
-**Bon développement! 🎉**
