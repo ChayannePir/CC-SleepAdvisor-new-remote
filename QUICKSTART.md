@@ -15,18 +15,7 @@ cd votre-dossier-projet
 composer install
 ```
 
-### Étape 2: Configurer la base de données
-
-```bash
-# Copier le template
-cp .env.example .env
-
-# Éditer .env et configurer DATABASE_URL
-# Exemple:
-# DATABASE_URL="mysql://root:password@127.0.0.1:3306/hotelbooking"
-```
-
-### Étape 3: Créer la base de données
+### Étape 2: Créer la base de données
 
 ```bash
 # Créer la base
@@ -39,7 +28,7 @@ php bin/console doctrine:migrations:migrate --no-interaction
 php bin/console doctrine:fixtures:load --no-interaction
 ```
 
-### Étape 4: Lancer l'application
+### Étape 3: Lancer l'application
 
 ```bash
 # Méthode 1: Avec Symfony CLI
@@ -71,18 +60,9 @@ php -S localhost:8000 -t public/
 .\check-installation.ps1
 ```
 
-### Linux/Mac (Bash)
-
-```bash
-bash check-installation.sh
-```
-
 ## 📚 Documentation complète
 
 - **README.md** - Guide complet du projet
-- **ARCHITECTURE.md** - Architecture technique
-- **INSTALLATION.md** - Instructions d'installation détaillées
-- **RESUME.md** - Résumé des accomplissements
 
 ## 🛠 Commandes utiles
 
