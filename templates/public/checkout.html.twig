@@ -130,71 +130,80 @@
         {# COLONNE 2 : Résumé latéral + support #}
         {# ==================================================== #}
         <div class="col-lg-4">
+
             {# ==================================================== #}
-            {# SECTION : Résumé de la réservation (sticky) #}
+            {# WRAPPER STICKY : Englobe les deux cartes pour éviter l'overlap #}
             {# ==================================================== #}
-            <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: white; sticky; position: sticky; top: 2rem;">
-                <div class="card-body">
-                    {# Titre du résumé #}
-                    <h5 style="font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px; color: #d4af37;">
-                        <i class="fas fa-clipboard-list"></i> Résumé
-                    </h5>
+            <div style="position: sticky; top: 2rem; z-index: 10;">
 
-                    {# Nombre de chambres sélectionnées #}
-                    <p style="margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
-                        <strong>Nombre de chambres:</strong>
-                        <span style="float: right; color: #d4af37; font-weight: 600;">{{ basket_info.count }}</span>
-                    </p>
+                {# ==================================================== #}
+                {# SECTION : Résumé de la réservation #}
+                {# ==================================================== #}
+                <div class="card" style="border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: white;">
+                    <div class="card-body">
+                        {# Titre du résumé #}
+                        <h5 style="font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px; color: #d4af37;">
+                            <i class="fas fa-clipboard-list"></i> Résumé
+                        </h5>
 
-                    {# Période de séjour (première date au dernière date) #}
-                    <p style="margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
-                        <strong>Période de séjour:</strong>
-                        <span style="display: block; color: #d4af37; font-weight: 600; margin-top: 0.3rem;">
-                            {{ basket_info.first_date_debut }}<br>
-                            au<br>
-                            {{ basket_info.last_date_fin }}
-                        </span>
-                    </p>
+                        {# Nombre de chambres sélectionnées #}
+                        <p style="margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                            <strong>Nombre de chambres:</strong>
+                            <span style="float: right; color: #d4af37; font-weight: 600;">{{ basket_info.count }}</span>
+                        </p>
 
-                    {# Hôtel (si une seule) #}
-                    {% if basket_info.hotels|length == 1 %}
-                        <p style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
-                            <strong>Hôtel:</strong>
+                        {# Période de séjour (première date au dernière date) #}
+                        <p style="margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                            <strong>Période de séjour:</strong>
                             <span style="display: block; color: #d4af37; font-weight: 600; margin-top: 0.3rem;">
-                                {% for hotelName in basket_info.hotels %}
-                                    {{ hotelName }}
-                                {% endfor %}
+                                {{ basket_info.first_date_debut }}<br>
+                                au<br>
+                                {{ basket_info.last_date_fin }}
                             </span>
                         </p>
-                    {% endif %}
 
-                    {# Statut de la réservation après confirmation #}
-                    <div style="background-color: rgba(212, 175, 55, 0.2); border-left: 3px solid #d4af37; padding: 1rem; border-radius: 4px;">
-                        <h6 style="color: #d4af37; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9rem;">
-                            ✓ Statut: En attente de confirmation
+                        {# Hôtel (si une seule) #}
+                        {% if basket_info.hotels|length == 1 %}
+                            <p style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                                <strong>Hôtel:</strong>
+                                <span style="display: block; color: #d4af37; font-weight: 600; margin-top: 0.3rem;">
+                                    {% for hotelName in basket_info.hotels %}
+                                        {{ hotelName }}
+                                    {% endfor %}
+                                </span>
+                            </p>
+                        {% endif %}
+
+                        {# Statut de la réservation après confirmation #}
+                        <div style="background-color: rgba(212, 175, 55, 0.2); border-left: 3px solid #d4af37; padding: 1rem; border-radius: 4px;">
+                            <h6 style="color: #d4af37; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9rem;">
+                                ✓ Statut: En attente de confirmation
+                            </h6>
+                            <small style="color: #ccc;">
+                                L'hôtel confirmera votre réservation dans les 24h
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                {# ==================================================== #}
+                {# SECTION : Support client #}
+                {# ==================================================== #}
+                <div class="card mt-3" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <div class="card-body">
+                        <h6 style="color: #1a1a1a; font-weight: 600; margin-bottom: 1rem;">
+                            <i class="fas fa-question-circle"></i> Besoin d'aide?
                         </h6>
-                        <small style="color: #ccc;">
-                            L'hôtel confirmera votre réservation dans les 24h
+                        <small style="color: #666; display: block; line-height: 1.6;">
+                            📞 support@sleepadvisor.com<br>
+                            💬 Chat disponible 24h/24
                         </small>
                     </div>
                 </div>
-            </div>
 
-            {# ==================================================== #}
-            {# SECTION : Support client #}
-            {# ==================================================== #}
-            <div class="card mt-3" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <div class="card-body">
-                    <h6 style="color: #1a1a1a; font-weight: 600; margin-bottom: 1rem;">
-                        <i class="fas fa-question-circle"></i> Besoin d'aide?
-                    </h6>
-                    <small style="color: #666; display: block; line-height: 1.6;">
-                        📞 support@sleepadvisor.com<br>
-                        💬 Chat disponible 24h/24
-                    </small>
-                </div>
-            </div>
+            </div> {# FIN DU WRAPPER STICKY #}
         </div>
+
     </div>
 </div>
 {% endblock %}
