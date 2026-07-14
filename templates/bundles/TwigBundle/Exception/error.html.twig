@@ -1,20 +1,20 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Erreur système</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; margin-top: 100px; background-color: #f8f9fa; }
-        .generic-error { border: 1px solid #dee2e6; padding: 40px; display: inline-block; border-radius: 8px; background-color: white; }
-    </style>
-</head>
-<body>
-    <div class="generic-error">
-        <h1>Oups ! Une erreur inattendue est survenue.</h1>
-        <p>Pour des raisons de sécurité, notre application a interrompu le processus.</p>
-        <p>Notre équipe technique a été automatiquement notifiée de cet incident.</p>
-        <br>
-        <a href="{{ path('/') }}">Retourner à la page d'accueil</a>
+{% extends 'base_new.html.twig' %}
+
+{% block title %}Erreur système - SleepAdvisor{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 40vh;">
+    <div class="text-center p-5 border rounded bg-white shadow-sm" style="max-width: 600px;">
+        <h1 class="text-danger mb-4">
+            <i class="fas fa-exclamation-triangle"></i> Oups ! Une erreur inattendue est survenue.
+        </h1>
+        <p class="lead">Pour des raisons de sécurité, notre application a interrompu le processus.</p>
+        <p class="text-muted mb-4">Notre équipe technique a été automatiquement notifiée de cet incident.</p>
+
+        {# La route correcte est bien app_home #}
+        <a href="{{ path('app_home') }}" class="btn" style="background-color: #d4af37; color: #000; font-weight: 500;">
+            <i class="fas fa-arrow-left"></i> Retourner à la page d'accueil
+        </a>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
