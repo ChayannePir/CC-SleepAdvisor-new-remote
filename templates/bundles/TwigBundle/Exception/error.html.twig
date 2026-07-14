@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Erreur système</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 100px; background-color: #f8f9fa; }
+        .generic-error { border: 1px solid #dee2e6; padding: 40px; display: inline-block; border-radius: 8px; background-color: white; }
+    </style>
+</head>
+<body>
+    <div class="generic-error">
+        <h1>Oups ! Une erreur inattendue est survenue.</h1>
+        <p>Pour des raisons de sécurité, notre application a interrompu le processus.</p>
+        <p>Notre équipe technique a été automatiquement notifiée de cet incident.</p>
+        <br>
+        <a href="{{ path('/') }}">Retourner à la page d'accueil</a>
+    </div>
+</body>
+</html>

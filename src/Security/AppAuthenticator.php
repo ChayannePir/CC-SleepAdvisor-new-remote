@@ -14,13 +14,15 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
  * Authenticateur personnalisé pour gérer la connexion
- * 
+ *
  * @package App\Security
  */
-class AppAuthenticator extends AbstractAuthenticator
+class AppAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
     use TargetPathTrait;
 
@@ -69,6 +71,15 @@ class AppAuthenticator extends AbstractAuthenticator
             $request->getSession()->set('_security.last_error', $exception);
         }
 
+        return new RedirectResponse($this->urlGenerator->generate(self::LOGIN_ROUTE));
+    }
+
+    /**
+     * Méthode appelée lorsqu'un utilisateur anonyme accède à une page protégée
+     */
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
+    {
+        // On redirige l'utilisateur vers la route de connexion
         return new RedirectResponse($this->urlGenerator->generate(self::LOGIN_ROUTE));
     }
 }
