@@ -99,7 +99,7 @@
     {# SECTION : Dernières réservations (8 récentes) #}
     {# Lien pour voir la liste complète des réservations #}
     {# ==================================================== #}
-    <div class="card admin-kpi-card">
+    <div class="card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0 text-uppercase small fw-semibold">Dernières réservations</h5>
             <a href="{{ path('admin_reservations_list') }}" class="btn btn-sm" style="background:#d4af37;color:#000;">Voir tout</a>
@@ -116,12 +116,26 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {# map des statuts vers les classes de badge (même palette que la légende) #}
+                    {% set statusClassMap = {
+                        'en attente': 'bg-warning text-dark',
+                        'en attente de confirmation': 'bg-warning text-dark',
+                        'confirmées': 'bg-success',
+                        'confirmée': 'bg-success',
+                        'confirmé': 'bg-success',
+                        'confirmé(e)': 'bg-success',
+                        'annulées': 'bg-secondary',
+                        'annulée': 'bg-secondary'
+                    } %}
+
                     {% for r in stats.recent_reservations %}
                         <tr>
                             <td class="fw-medium">{{ r.numeroReservation }}</td>
                             <td class="d-none d-md-table-cell">{{ r.client.nom }}</td>
                             <td class="d-none d-lg-table-cell">{{ r.hotel.nom }}</td>
-                            <td><span class="badge bg-secondary">{{ r.statut }}</span></td>
+                            {# Choix de la classe de badge selon le statut (fallback bg-secondary) #}
+                            {% set badgeClass = statusClassMap[r.statut|lower] ?? 'bg-secondary' %}
+                            <td><span class="badge {{ badgeClass }}">{{ r.statut }}</span></td>
                             <td>
                                 <a href="{{ path('admin_reservation_detail', {id: r.id}) }}" class="btn btn-sm btn-outline-secondary">Détail</a>
                             </td>
@@ -134,10 +148,12 @@
         </div>
         <div class="admin-cards-mobile p-3">
             {% for r in stats.recent_reservations %}
+                {# réutilise la même logique de couleur pour les badges mobile #}
+                {% set badgeClass = statusClassMap[r.statut|lower] ?? 'bg-secondary' %}
                 <div class="admin-mobile-card">
                     <strong>{{ r.numeroReservation }}</strong>
                     <div class="small text-muted">{{ r.client.nom }} — {{ r.hotel.nom }}</div>
-                    <span class="badge bg-secondary">{{ r.statut }}</span>
+                    <span class="badge {{ badgeClass }}">{{ r.statut }}</span>
                     <a href="{{ path('admin_reservation_detail', {id: r.id}) }}" class="btn btn-sm btn-outline-secondary mt-2">Détail</a>
                 </div>
             {% endfor %}
